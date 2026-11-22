@@ -68,3 +68,13 @@ describe('rotas e layout', () => {
     expect(router.state.location.pathname).toBe('/config');
   });
 });
+
+describe('Programa lê o banco', () => {
+  it('lista os treinos do seed', async () => {
+    renderAt('/programa');
+    expect(await screen.findByText('Peito, ombro e tríceps')).toBeInTheDocument();
+    expect(screen.getByText('Costas e bíceps')).toBeInTheDocument();
+    expect(screen.getByText('Pernas e core')).toBeInTheDocument();
+    expect(screen.getByText('6 exercícios · 3 opcionais')).toBeInTheDocument();
+  });
+});

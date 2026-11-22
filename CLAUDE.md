@@ -7,7 +7,19 @@
 - Toda lógica de cálculo vai em `src/domain/` como funções puras com testes. Componentes não calculam progressão.
 - Estado das fases:
   - [x] Fase 0 — setup, layout com barra inferior, rotas vazias
-  - [ ] Fase 1 — dados (Dexie), tipos, seed, `domain/` com testes
+  - [x] Fase 1 — dados (Dexie), tipos, seed, `domain/` com testes
+  - [ ] Fase 2 — sessão ativa (5.2 e 5.3)
+
+## Decisões que desviam ou completam o SPEC
+
+- `exercises.archived` não é indexado no Dexie (booleano não é chave válida no IndexedDB); filtrar em memória.
+- `Slot.startWeightKg` (opcional): carga quando o exercício nunca foi feito (lateral: 8 kg).
+- `SessionEntry` guarda snapshot do slot: `label`, `plannedSets`, `optional`, `protocol`.
+- `Settings` ganhou `lateralDropKg` (padrão 2) e `wakeLock` (padrão true), citados em §5.3/§5.8.
+- "Hack squat leve" é um exercício separado do "Hack squat", para não misturar referências de carga.
+- Métrica lateral: "sem aumento" = não superar a melhor soma já feita na mesma carga inicial;
+  mudar a carga inicial zera a contagem.
+- Testes de backup (§9) ficam para a Fase 8, junto com a exportação/importação.
 
 ## Comandos
 
