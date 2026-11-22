@@ -244,3 +244,22 @@ export async function finishSession(sessionId: string, notes?: string): Promise<
 export async function discardSession(sessionId: string): Promise<void> {
   await db.sessions.update(sessionId, { status: 'descartada', finishedAt: nowIso() });
 }
+
+/** Exclui a sessão e todas as séries dela (histórico). Não tem desfazer. */
+export async function deleteSession(sessionId: string): Promise<void> {
+  await db.transaction('rw', db.sessions, db.setLogs, async () => {
+    await db.setLogs.where('sessionId').equals(sessionId).delete();
+    await db.sessions.delete(sessionId);
+  });
+}
+
+export async function updateSessionNotes(sessionId: string, notes: string): Promise<void> {
+  await db.transaction('rw', db.sessions, async () => {
+    const session = await getSessionOrThrow(sessionId);
+    const next: Session = { ...session };
+    const trimmed = notes.trim();
+    if (trimmed) next.notes = trimmed;
+    else delete next.notes;
+    await db.sessions.put(next);
+  });
+}

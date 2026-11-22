@@ -16,7 +16,6 @@ describe('rotas e layout', () => {
   it.each([
     ['/', 'Treino ABC'],
     ['/historico', 'Histórico'],
-    ['/historico/s1', 'Detalhe da sessão'],
     ['/progresso', 'Progresso'],
     ['/exercicio/e1', 'Exercício'],
     ['/programa', 'Programa'],
@@ -29,8 +28,8 @@ describe('rotas e layout', () => {
     expect(screen.getByRole('heading', { level: 1, name: title })).toBeInTheDocument();
   });
 
-  it('sessão inexistente mostra aviso', async () => {
-    renderAt('/sessao/nao-existe');
+  it.each(['/sessao/nao-existe', '/historico/nao-existe'])('%s mostra aviso', async (path) => {
+    renderAt(path);
     expect(await screen.findByText('Sessão não encontrada.')).toBeInTheDocument();
   });
 

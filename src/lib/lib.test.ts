@@ -1,6 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import { calendarDaysBetween } from './dates';
-import { describeSets, formatKg } from './format';
+import { describeSets, formatDuration, formatKg, formatMonthKey } from './format';
+
+describe('formatação de datas e duração', () => {
+  it('mês por extenso', () => {
+    expect(formatMonthKey('2026-03')).toBe('março de 2026');
+  });
+
+  it('duração', () => {
+    expect(formatDuration(52)).toBe('52 min');
+    expect(formatDuration(95)).toBe('1h35');
+    expect(formatDuration(120)).toBe('2h');
+  });
+});
 
 describe('formatKg', () => {
   it('usa vírgula decimal e omite zeros', () => {

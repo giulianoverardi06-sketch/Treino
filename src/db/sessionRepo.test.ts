@@ -4,6 +4,7 @@ import {
   addSessionEntry,
   addSetRow,
   confirmSet,
+  deleteSession,
   discardSession,
   finishSession,
   moveSessionEntry,
@@ -13,6 +14,7 @@ import {
   setEntrySkipped,
   startSession,
   swapExercise,
+  updateSessionNotes,
   updateSet,
 } from './sessionRepo';
 
@@ -171,5 +173,33 @@ describe('sessionRepo', () => {
     const other = await startSession('B');
     await discardSession(other);
     expect((await db.sessions.get(other))?.status).toBe('descartada');
+  });
+
+  it('excluir sessão apaga as séries dela e só dela', async () => {
+    const { id, first } = await started();
+    const base = {
+      entryId: first.id,
+      exerciseId: first.exerciseId,
+      setIndex: 1,
+      weightKg: 40,
+      toFailure: true,
+    };
+    await confirmSet({ ...base, sessionId: id });
+    await finishSession(id);
+    const other = await startSession('B');
+    await confirmSet({ ...base, sessionId: other });
+
+    await deleteSession(id);
+    expect(await db.sessions.get(id)).toBeUndefined();
+    expect(await logsOf(id, first.id)).toHaveLength(0);
+    expect(await db.setLogs.where('sessionId').equals(other).count()).toBe(1);
+  });
+
+  it('editar observação', async () => {
+    const { id } = await started();
+    await updateSessionNotes(id, ' dor no ombro ');
+    expect((await db.sessions.get(id))?.notes).toBe('dor no ombro');
+    await updateSessionNotes(id, '  ');
+    expect((await db.sessions.get(id))?.notes).toBeUndefined();
   });
 });

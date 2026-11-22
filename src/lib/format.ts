@@ -55,3 +55,46 @@ export function formatDaysAgo(days: number): string {
 export function plural(n: number, one: string, many: string): string {
   return n === 1 ? one : many;
 }
+
+const weekdayDate = new Intl.DateTimeFormat('pt-BR', {
+  weekday: 'short',
+  day: 'numeric',
+  month: 'short',
+});
+const longDate = new Intl.DateTimeFormat('pt-BR', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+const monthYear = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' });
+const time = new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+/** "qui., 5 de mar." */
+export function formatWeekdayDate(iso: string): string {
+  return weekdayDate.format(new Date(iso));
+}
+
+/** "quinta-feira, 5 de março de 2026" */
+export function formatLongDate(iso: string): string {
+  return longDate.format(new Date(iso));
+}
+
+/** "18:40" */
+export function formatTime(iso: string): string {
+  return time.format(new Date(iso));
+}
+
+/** "2026-03" → "março de 2026" */
+export function formatMonthKey(key: string): string {
+  const [y, m] = key.split('-').map(Number);
+  return monthYear.format(new Date(y ?? 2000, (m ?? 1) - 1, 1));
+}
+
+/** 52 → "52 min"; 95 → "1h35" */
+export function formatDuration(minutes: number): string {
+  if (minutes < 60) return `${minutes} min`;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m ? `${h}h${String(m).padStart(2, '0')}` : `${h}h`;
+}

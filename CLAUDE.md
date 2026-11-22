@@ -10,7 +10,8 @@
   - [x] Fase 1 — dados (Dexie), tipos, seed, `domain/` com testes
   - [x] Fase 2 — sessão ativa (5.2 e 5.3); Início provisório com iniciar A/B/C e continuar
   - [x] Fase 3 — Início com próximo treino, sobreposição e continuar sessão
-  - [ ] Fase 4 — Histórico (5.4) e edição de séries passadas
+  - [x] Fase 4 — Histórico (5.4) e edição de séries passadas
+  - [ ] Fase 5 — Progressão e gráficos (5.5)
 
 ## Decisões que desviam ou completam o SPEC
 
@@ -35,6 +36,11 @@
 - Com sessão em andamento, os botões de outros treinos somem (só uma sessão por vez).
 - "Últimos 7/30 dias" contam dias de calendário, com hoje incluído.
 - `useLiveQuery` devolve o `now` junto com os dados, para o render continuar puro (lint do React).
+- Histórico lista só sessões concluídas, agrupadas por mês; filtro por letra fica na URL (`?letra=B`).
+  Descartadas não aparecem na lista (o detalhe delas ainda abre pela URL, com aviso).
+- Excluir sessão apaga a sessão e as séries dela de vez (com confirmação; sem desfazer).
+- Nomes acessíveis compostos usam `aria-label` em vez de `sr-only` + texto (o espaço entre
+  elementos se perde no cálculo do nome).
 
 ## Comandos
 
