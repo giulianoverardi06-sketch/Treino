@@ -11,10 +11,12 @@ export function WeightInput({
   value,
   label,
   onCommit,
+  className = 'h-12 text-[1.75rem] font-bold',
 }: {
   value: number;
   label: string;
   onCommit: (kg: number) => void;
+  className?: string;
 }) {
   const [text, setText] = useState(formatNumber(value));
   const commit = () => {
@@ -38,7 +40,7 @@ export function WeightInput({
       onKeyDown={(e) => {
         if (e.key === 'Enter') e.currentTarget.blur();
       }}
-      className="h-11 w-full min-w-0 rounded-lg bg-bg text-center text-lg font-semibold text-text num"
+      className={`w-full min-w-0 rounded-[3px] border-2 border-transparent bg-transparent text-center text-current num hover:border-current/25 focus:border-current/40 ${className}`}
     />
   );
 }
@@ -78,7 +80,7 @@ export function RepsInput({
       onKeyDown={(e) => {
         if (e.key === 'Enter') e.currentTarget.blur();
       }}
-      className="h-11 w-full min-w-0 rounded-lg bg-bg text-center text-base text-text num placeholder:text-muted/60"
+      className="h-12 w-full min-w-0 rounded-[3px] border-2 border-current/25 bg-transparent text-center text-lg font-semibold text-current num placeholder:text-current/45 focus:border-current/60"
     />
   );
 }

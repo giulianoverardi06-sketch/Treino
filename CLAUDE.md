@@ -42,9 +42,8 @@
 - Excluir sessão apaga a sessão e as séries dela de vez (com confirmação; sem desfazer).
 - Nomes acessíveis compostos usam `aria-label` em vez de `sr-only` + texto (o espaço entre
   elementos se perde no cálculo do nome).
-- Cores das letras no tema escuro validadas como paleta categórica (script do skill dataviz):
-  `#e7652e`, `#2998ed`, `#1bad69`. Gráficos usam os tokens por classe CSS (`fill-letter-a` etc.),
-  porque o Recharts escreve cores como atributo SVG.
+- Gráficos usam os tokens por classe CSS (`fill-letter-a` etc.), porque o Recharts escreve cores
+  como atributo SVG; rótulos dos eixos recebem `style` inline com `var(--text-muted)`.
 - Gráficos: ponto colorido pela letra da sessão; um único eixo; tooltip; tabela em "Ver tabela".
 - "Séries por sessão" = séries registradas (não só as até a falha).
 - Recordes do exercício são de todo o histórico; o período filtra gráficos e lista.
@@ -65,11 +64,24 @@ npm run build       # typecheck + build de produção
 npm run format      # Prettier
 ```
 
+## Visual (leia antes de mexer em UI)
+
+- Mundo visual: sinalização de terminal de aeroporto, escolhido no redesign com a skill impeccable.
+  Regras e tokens em [DESIGN.md](DESIGN.md); produto em [PRODUCT.md](PRODUCT.md); contrato da
+  direção em `.impeccable/surfaces/src-app-applayout-tsx.md`.
+- Amarelo `sign` só para caminho / próxima ação (placa do Início, faixa da série da vez, ✓ da série
+  ativa, Finalizar quando tudo foi registrado, aba ativa). Nunca como enfeite.
+- Peças: `Tile`, `LetterTile`, `ArrowLead` (`components/Sign.tsx`), `Button` + `buttonStyles.ts`.
+  Listas e gráficos de consulta ficam dentro de um quadro emoldurado
+  (`rounded-[4px] border-2 border-edge bg-surface`). Raio ≤ 4px, sem sombras.
+- Fonte: Source Sans 3 Variable empacotada (`@fontsource-variable`), algarismos tabulares nativos.
+
 ## Convenções
 
 - Alias `@/` → `src/`.
-- Cores via tokens em `src/index.css` (`bg`, `surface`, `surface-2`, `border`, `text`, `muted`,
-  `letter-a|b|c`, `danger`, `focus`). Tema escuro é o padrão; claro via `<html data-theme="light">`.
-- Utilitário `num` para dígitos tabulares em cargas/repetições.
+- Cores via tokens em `src/index.css` (`bg`, `surface`, `surface-2`, `border`, `edge`, `text`,
+  `muted`, `sign`, `on-sign`, `tile`, `on-tile`, `letter-a|b|c`, `focus`). Tema escuro é o padrão;
+  claro via `<html data-theme="light">`.
+- Utilitário `num` para dígitos tabulares; `flap` para a troca da placa (≤150ms).
 - Hash router (`createHashRouter`); a lista de rotas fica em `src/app/routes.tsx` e é reutilizada nos testes.
 - Alvos de toque ≥ 44px (`min-h-11`/`size-11`), transições ≤ 150ms.

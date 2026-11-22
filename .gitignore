@@ -13,3 +13,6 @@ coverage
 .idea
 .DS_Store
 *.log
+
+# impeccable: imagens de referência baixadas do catálogo
+.impeccable/reference/

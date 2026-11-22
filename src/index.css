@@ -1,54 +1,72 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/source-sans-3/wght.css';
 
 /*
- * Tokens de cor. Tema escuro é o padrão (academia, brilho baixo).
- * O tema claro é aplicado com <html data-theme="light"> (configurável na Fase 8).
+ * Mundo: sinalização de terminal. Amarelo = caminho / próxima ação, e nada mais.
+ * Tema escuro é o padrão (SPEC); claro via <html data-theme="light"> (Fase 8).
  */
 :root,
 [data-theme='dark'] {
   color-scheme: dark;
-  --bg: #0b0d10;
-  --surface: #15181d;
-  --surface-2: #1e2229;
-  --border: #2a2f38;
-  --text: #f2f4f7;
-  --text-muted: #9aa3b2;
-  /* Validadas como paleta categórica (CVD, contraste, faixa de luminosidade) nas duas superfícies. */
-  --accent-a: #e7652e; /* A — Peito, ombro e tríceps */
-  --accent-b: #2998ed; /* B — Costas e bíceps */
-  --accent-c: #1bad69; /* C — Pernas e core */
-  --danger: #ff5c5c;
-  --focus: #ffd166;
+  --bg: #0b0b0b; /* preto de placa */
+  --surface: #1a1a1a; /* moldura */
+  --surface-2: #262626;
+  --border: #3d3d3d; /* fio de separação */
+  --edge: #5c5c5c; /* contorno de controle */
+  --text: #ffffff;
+  --text-muted: #b8b8b8;
+  --sign: #ffcc00;
+  --on-sign: #0b0b0b;
+  --on-sign-muted: #3d3300;
+  --tile: #000000;
+  --on-tile: #ffffff;
+  /* Validadas como paleta categórica (todos os pares, CVD) sobre #1a1a1a. */
+  --accent-a: #d0342c;
+  --accent-b: #3a8ff0;
+  --accent-c: #16a8a0;
+  --focus: #ffcc00;
 }
 
 [data-theme='light'] {
   color-scheme: light;
-  --bg: #f6f7f9;
+  --bg: #e6e6e6; /* cinza de superfície */
   --surface: #ffffff;
-  --surface-2: #eceef2;
-  --border: #d5d9e0;
-  --text: #111418;
-  --text-muted: #555e6c;
-  --accent-a: #c4461a;
-  --accent-b: #1166b8;
-  --accent-c: #16804a;
-  --danger: #c42b2b;
-  --focus: #8a5a00;
+  --surface-2: #f2f2f2;
+  --border: #c4c4c4;
+  --edge: #0b0b0b;
+  --text: #0b0b0b;
+  --text-muted: #4a4a4a;
+  --sign: #ffcc00;
+  --on-sign: #0b0b0b;
+  --on-sign-muted: #3d3300;
+  --tile: #0b0b0b;
+  --on-tile: #ffffff;
+  --accent-a: #b42318;
+  --accent-b: #175cd3;
+  --accent-c: #008a72;
+  --focus: #0b0b0b;
 }
 
 @theme inline {
+  --font-sans: 'Source Sans 3 Variable', 'Segoe UI', system-ui, sans-serif;
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-border: var(--border);
+  --color-edge: var(--edge);
   --color-text: var(--text);
   --color-muted: var(--text-muted);
+  --color-sign: var(--sign);
+  --color-on-sign: var(--on-sign);
+  --color-on-sign-muted: var(--on-sign-muted);
+  --color-tile: var(--tile);
+  --color-on-tile: var(--on-tile);
   --color-letter-a: var(--accent-a);
   --color-letter-b: var(--accent-b);
   --color-letter-c: var(--accent-c);
-  --color-danger: var(--danger);
   --color-focus: var(--focus);
   --default-transition-duration: 150ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @layer base {
@@ -61,18 +79,38 @@
   body {
     background-color: var(--bg);
     color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.4;
     -webkit-tap-highlight-color: transparent;
-    font-family:
-      system-ui,
-      -apple-system,
-      'Segoe UI',
-      Roboto,
-      sans-serif;
+    caret-color: var(--sign);
+  }
+
+  ::selection {
+    background: var(--sign);
+    color: var(--on-sign);
   }
 
   :focus-visible {
-    outline: 2px solid var(--focus);
+    outline: 3px solid var(--focus);
     outline-offset: 2px;
+  }
+
+  /* Na placa amarela o foco precisa ser preto. */
+  .bg-sign :focus-visible,
+  .bg-sign:focus-visible {
+    outline-color: var(--on-sign);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--edge) transparent;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-muted);
+    opacity: 0.75;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -87,5 +125,22 @@
 
 /* Números de carga/repetições: dígitos tabulares. */
 @utility num {
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Painel split-flap: a mensagem nova desce para o lugar. */
+@keyframes flap {
+  from {
+    transform: perspective(400px) rotateX(-70deg);
+    opacity: 0.2;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@utility flap {
+  transform-origin: top center;
+  animation: flap 140ms var(--ease-out-expo) both;
 }

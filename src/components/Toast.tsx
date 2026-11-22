@@ -55,12 +55,15 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         className="pointer-events-none fixed inset-x-0 bottom-24 z-30 mx-auto flex max-w-[480px] justify-center px-4"
       >
         {toast && (
-          <div className="pointer-events-auto flex min-h-12 w-full items-center gap-3 rounded-xl border border-border bg-surface-2 py-1 pr-1 pl-4 text-sm shadow-lg">
+          <div
+            key={toast.id}
+            className="pointer-events-auto flex min-h-14 w-full flap items-center gap-3 rounded-[4px] bg-tile py-1 pr-1 pl-4 text-base font-semibold text-on-tile"
+          >
             <span className="flex-1">{toast.message}</span>
             {toast.actionLabel && toast.onAction && (
               <button
                 type="button"
-                className="min-h-11 rounded-lg px-3 font-semibold text-focus"
+                className="min-h-12 rounded-[3px] bg-sign px-4 font-bold text-on-sign"
                 onClick={() => {
                   toast.onAction?.();
                   setToast(null);

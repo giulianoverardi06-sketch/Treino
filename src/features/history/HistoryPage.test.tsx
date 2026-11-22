@@ -59,8 +59,10 @@ describe('Histórico', () => {
 
     const march = await screen.findByRole('region', { name: 'março de 2026' });
     const links = within(march).getAllByRole('link');
-    expect(links.map((l) => l.textContent.charAt(0))).toEqual(['C', 'B']);
-    expect(links[0]).toHaveTextContent('1 exercício · 1 série · 52 min');
+    expect(
+      links.map((l) => /treino ([ABC])/.exec(l.getAttribute('aria-label') ?? '')?.[1]),
+    ).toEqual(['C', 'B']);
+    expect(links[0]).toHaveAccessibleName(/treino C: Pernas e core, 1 série, 52 min/);
     expect(screen.getByRole('region', { name: 'fevereiro de 2026' })).toBeInTheDocument();
   });
 
@@ -91,7 +93,7 @@ describe('Detalhe da sessão', () => {
       'Carga da série 2 de Supino inclinado na máquina (kg)',
     );
     expect(weight).toHaveValue('42,5');
-    expect(screen.getAllByText('não feito').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/não feito/).length).toBeGreaterThan(0);
 
     await userEvent.clear(weight);
     await userEvent.type(weight, '45{Enter}');

@@ -49,10 +49,13 @@ const FILL: Record<Letter, string> = {
 const CHART_THEME = [
   '[&_.recharts-cartesian-grid_line]:stroke-border',
   '[&_.recharts-cartesian-axis-tick-value]:fill-muted',
-  '[&_.recharts-cartesian-axis-tick-value]:text-[11px]',
+  '[&_.recharts-cartesian-axis-tick-value]:text-[12px]',
   '[&_.recharts-tooltip-cursor]:stroke-border',
   '[&_.recharts-tooltip-cursor]:fill-surface-2',
 ].join(' ');
+
+/** Rótulos dos eixos na cor secundária do tema (estilo inline aceita variáveis CSS). */
+const TICK = { style: { fill: 'var(--text-muted)', fontSize: 12 } };
 
 function formatValue(v: number, unit: string) {
   return `${formatNumber(v)} ${unit}`;
@@ -68,11 +71,11 @@ function TooltipBox({ active, payload, unit }: TooltipBoxProps) {
   const p = payload?.[0]?.payload as ChartPoint | undefined;
   if (!active || !p) return null;
   return (
-    <div className="rounded-lg border border-border bg-surface-2 px-3 py-2 text-xs shadow-lg">
-      <p className="text-muted">
+    <div className="rounded-[3px] bg-tile px-3 py-2 text-sm text-on-tile">
+      <p className="text-white/70">
         {formatShortDate(p.date)} · Treino {p.letter}
       </p>
-      <p className="text-sm font-semibold text-text num">{formatValue(p.value, unit)}</p>
+      <p className="text-lg font-bold num">{formatValue(p.value, unit)}</p>
     </div>
   );
 }
@@ -106,16 +109,16 @@ export function SessionChart({
   const titleId = useId();
 
   return (
-    <figure className="rounded-xl bg-surface p-3" aria-labelledby={titleId}>
-      <figcaption className="mb-2 px-1">
-        <span id={titleId} className="block text-sm font-semibold">
+    <figure className="rounded-[4px] border-2 border-edge bg-surface p-3" aria-labelledby={titleId}>
+      <figcaption className="mb-2">
+        <span id={titleId} className="block text-lg font-bold">
           {title}
         </span>
-        {note && <span className="block text-xs text-muted">{note}</span>}
+        {note && <span className="block text-sm text-muted">{note}</span>}
       </figcaption>
 
       {!enough ? (
-        <p className="px-1 py-6 text-center text-sm text-muted">
+        <p className="py-6 text-base text-muted">
           {points.length === 0
             ? 'Sem dados no período.'
             : 'Faça mais uma sessão para ver a evolução.'}
@@ -126,9 +129,16 @@ export function SessionChart({
             <ResponsiveContainer width="100%" height="100%">
               {kind === 'line' ? (
                 <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-                  <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                  <XAxis dataKey="label" tickLine={false} axisLine={false} minTickGap={16} />
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="label"
+                    tickLine={false}
+                    axisLine={false}
+                    minTickGap={16}
+                    tick={TICK}
+                  />
                   <YAxis
+                    tick={TICK}
                     width={36}
                     tickLine={false}
                     axisLine={false}
@@ -146,7 +156,7 @@ export function SessionChart({
                     type="linear"
                     dataKey="value"
                     strokeWidth={2}
-                    className="[&_.recharts-line-curve]:stroke-muted"
+                    className="[&_.recharts-line-curve]:stroke-text"
                     dot={<Dot />}
                     activeDot={<Dot r={6} />}
                     isAnimationActive={false}
@@ -154,9 +164,21 @@ export function SessionChart({
                 </LineChart>
               ) : (
                 <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-                  <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                  <XAxis dataKey="label" tickLine={false} axisLine={false} minTickGap={16} />
-                  <YAxis width={36} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="label"
+                    tickLine={false}
+                    axisLine={false}
+                    minTickGap={16}
+                    tick={TICK}
+                  />
+                  <YAxis
+                    width={36}
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
+                    tick={TICK}
+                  />
                   <Tooltip
                     content={(p) => (
                       <TooltipBox active={p.active} payload={p.payload} unit={unit} />
@@ -184,9 +206,9 @@ export function SessionChart({
           </div>
 
           {letters.length > 1 && (
-            <ul className="mt-1 flex gap-3 px-1 text-xs text-muted" aria-label="Legenda">
+            <ul className="mt-1 flex gap-4 text-sm text-muted" aria-label="Legenda">
               {letters.map((l) => (
-                <li key={l} className="flex items-center gap-1">
+                <li key={l} className="flex items-center gap-1.5">
                   <svg width="8" height="8" aria-hidden>
                     <circle cx="4" cy="4" r="4" className={FILL[l]} />
                   </svg>
@@ -196,8 +218,10 @@ export function SessionChart({
             </ul>
           )}
 
-          <details className="mt-2 px-1 text-xs text-muted">
-            <summary className="min-h-11 cursor-pointer content-center">Ver tabela</summary>
+          <details className="mt-1 text-sm text-muted">
+            <summary className="min-h-11 cursor-pointer content-center font-semibold">
+              Ver tabela
+            </summary>
             <table className="w-full text-left num">
               <caption className="sr-only">{title}</caption>
               <thead>

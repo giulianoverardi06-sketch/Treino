@@ -1,8 +1,16 @@
-import { ChartLine, ChevronDown, ChevronUp, Pencil, Plus, SkipForward, Undo2 } from 'lucide-react';
+import {
+  ChartLine,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Pencil,
+  Plus,
+  SkipForward,
+  Undo2,
+} from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { ExerciseImage } from '@/components/ExerciseImage';
-import { LETTER_STYLES } from '@/components/letterStyles';
+import { Tile } from '@/components/Sign';
 import { useToast } from '@/components/Toast';
 import {
   addSetRow,
@@ -14,6 +22,7 @@ import {
   swapExercise,
   updateSet,
 } from '@/db/sessionRepo';
+import { MUSCLE_LABELS } from '@/domain/labels';
 import { lastPerformance, prefillFromLastSession } from '@/domain/prefill';
 import { applyDrop, buildRows, propagateWeight } from '@/domain/sessionRows';
 import type { Exercise, SessionEntry, SetLog, Slot } from '@/domain/types';
@@ -26,6 +35,8 @@ import type { SessionData } from './useSessionData';
 interface EntryCardProps {
   data: SessionData;
   entry: SessionEntry;
+  /** Posição na sequência (1..n). */
+  position: number;
   slot: Slot | undefined;
   /** Séries desta entrada nesta sessão. */
   logs: SetLog[];
@@ -37,8 +48,8 @@ interface EntryCardProps {
   onCompleted: () => void;
 }
 
-const smallBtn =
-  'flex min-h-11 items-center gap-1.5 rounded-lg px-3 text-sm text-muted hover:text-text disabled:opacity-40';
+const lineBtn =
+  'flex min-h-11 items-center gap-2 rounded-[3px] px-3 text-base font-semibold text-muted hover:bg-surface-2 hover:text-text disabled:opacity-35';
 
 function exerciseName(exercises: ReadonlyMap<string, Exercise>, id: string) {
   return exercises.get(id)?.name ?? 'Exercício removido';
@@ -47,6 +58,7 @@ function exerciseName(exercises: ReadonlyMap<string, Exercise>, id: string) {
 export function EntryCard({
   data,
   entry,
+  position,
   slot,
   logs,
   expanded,
@@ -57,7 +69,6 @@ export function EntryCard({
 }: EntryCardProps) {
   const { session, settings, exercises, sessions, historyLogs } = data;
   const exercise = exercises.get(entry.exerciseId);
-  const style = LETTER_STYLES[session.letter];
   const drafts = useEntryDrafts(session.id, entry.id);
   const store = useDraftStore;
   const toast = useToast();
@@ -78,6 +89,7 @@ export function EntryCard({
   const rows = buildRows(prefill, logs, drafts);
   const last = lastPerformance(entry.exerciseId, sessions, historyLogs, session.id);
   const done = rows.filter((r) => r.confirmed).length;
+  const complete = done > 0 && done >= entry.plannedSets;
   const activeIndex = rows.find((r) => !r.confirmed)?.setIndex;
   const isLateral = entry.protocol === 'drop_lateral';
   const options = slot ? [slot.primaryExerciseId, ...slot.alternativeExerciseIds] : [];
@@ -126,11 +138,7 @@ export function EntryCard({
   function editRow(
     setIndex: number,
     logId: string | undefined,
-    patch: {
-      weightKg?: number;
-      reps?: number | null;
-      toFailure?: boolean;
-    },
+    patch: { weightKg?: number; reps?: number | null; toFailure?: boolean },
   ) {
     if (logId) {
       void updateSet(logId, patch);
@@ -153,11 +161,23 @@ export function EntryCard({
   }
 
   const headerId = `entry-${entry.id}`;
+  const muscle = exercise?.primaryMuscles[0];
+  const subline = [
+    entry.slotId ? entry.label : 'Adicionado na hora',
+    muscle ? MUSCLE_LABELS[muscle] : null,
+    entry.optional ? 'opcional' : null,
+    entry.skipped ? 'pulado' : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
   return (
     <li
-      className={`rounded-xl border bg-surface ${expanded ? 'border-border' : 'border-transparent'} ${
-        entry.skipped ? 'opacity-60' : ''
-      }`}
+      className={
+        expanded
+          ? '-mx-4 border-y-2 border-edge bg-surface px-4 pb-4'
+          : `border-b border-border ${entry.skipped ? 'opacity-55' : ''}`
+      }
     >
       <div className="flex items-center">
         <button
@@ -165,32 +185,24 @@ export function EntryCard({
           id={headerId}
           aria-expanded={expanded}
           onClick={onToggle}
-          className="flex min-h-16 min-w-0 flex-1 items-center gap-3 p-3 text-left"
+          className="flex min-h-[4.5rem] min-w-0 flex-1 items-center gap-3 py-3 text-left"
         >
-          <ExerciseImage exercise={exercise} size="thumb" />
+          {complete ? <Tile icon={Check} inverse /> : <Tile>{position}</Tile>}
           <span className="min-w-0 flex-1">
-            <span className="block truncate font-semibold">
+            <span className="block text-lg leading-tight font-bold">
               {exerciseName(exercises, entry.exerciseId)}
             </span>
-            <span className="flex flex-wrap items-center gap-x-1.5 text-xs text-muted">
-              {entry.slotId && <span className="truncate">{entry.label}</span>}
-              {entry.optional && (
-                <span className="rounded bg-surface-2 px-1.5 py-0.5 text-[0.7rem]">opcional</span>
-              )}
-              {entry.skipped && (
-                <span className="rounded bg-surface-2 px-1.5 py-0.5 text-[0.7rem]">pulado</span>
-              )}
-            </span>
-            <span className="block truncate text-xs text-muted">
-              {last
-                ? `Última: ${describeSets(last.sets)} · ${formatShortDate(last.session.startedAt)}`
-                : 'Primeira vez'}
-            </span>
+            <span className="mt-0.5 block truncate text-sm text-muted">{subline}</span>
+            {expanded && (
+              <span className="mt-0.5 block text-sm text-muted num">
+                {last
+                  ? `Última: ${describeSets(last.sets)} · ${formatShortDate(last.session.startedAt)}`
+                  : 'Primeira vez'}
+              </span>
+            )}
           </span>
           {!entry.skipped && (
-            <span
-              className={`shrink-0 text-sm font-semibold num ${done >= entry.plannedSets && done > 0 ? style.text : 'text-muted'}`}
-            >
+            <span className="shrink-0 text-xl font-bold num">
               {done}/{entry.plannedSets}
               <span className="sr-only"> séries</span>
             </span>
@@ -199,7 +211,7 @@ export function EntryCard({
         {entry.optional && !entry.skipped && done === 0 && !expanded && (
           <button
             type="button"
-            className={`${smallBtn} mr-1`}
+            className={`${lineBtn} ml-1`}
             onClick={() => void setEntrySkipped(session.id, entry.id, true)}
           >
             Pular
@@ -208,25 +220,22 @@ export function EntryCard({
       </div>
 
       {expanded && (
-        <div className="flex flex-col gap-3 px-2 pb-3" role="region" aria-labelledby={headerId}>
-          <div className="px-1">
-            <ExerciseImage exercise={exercise} size="large" />
-          </div>
+        <div className="flex flex-col gap-4" role="region" aria-labelledby={headerId}>
           {(exercise?.notes ?? slot?.notes) && (
-            <p className="px-1 text-sm text-muted">
+            <p className="text-base text-muted">
               {[exercise?.notes, slot?.notes].filter(Boolean).join(' · ')}
             </p>
           )}
 
           {options.length > 1 && (
-            <div className="px-1">
-              <p className="mb-1 text-xs text-muted" id={`${headerId}-alt`}>
+            <fieldset>
+              <legend className="mb-1.5 text-sm font-semibold text-muted">
                 Exercício nesta sessão
-              </p>
+              </legend>
               <div
                 role="radiogroup"
-                aria-labelledby={`${headerId}-alt`}
-                className="flex flex-wrap gap-1.5"
+                aria-label="Exercício nesta sessão"
+                className="flex flex-col gap-1"
               >
                 {options.map((id, i) => {
                   const selected = id === entry.exerciseId;
@@ -238,42 +247,50 @@ export function EntryCard({
                       aria-checked={selected}
                       disabled={!canSwap && !selected}
                       onClick={() => void swap(id)}
-                      className={`min-h-11 rounded-lg border px-3 text-left text-sm ${
+                      className={`flex min-h-12 items-center gap-3 rounded-[3px] border-2 px-3 text-left text-base ${
                         selected
-                          ? 'border-text bg-surface-2 font-semibold'
-                          : 'border-border text-muted hover:text-text disabled:opacity-40'
+                          ? 'border-text font-semibold'
+                          : 'border-border text-muted hover:border-edge hover:text-text disabled:opacity-35'
                       }`}
                     >
-                      {exerciseName(exercises, id)}
-                      {i === 0 && <span className="ml-1 text-xs text-muted">(principal)</span>}
+                      <span
+                        aria-hidden
+                        className={`size-4 shrink-0 rounded-full border-2 ${
+                          selected ? 'border-text bg-text' : 'border-current'
+                        }`}
+                      />
+                      <span className="flex-1">{exerciseName(exercises, id)}</span>
+                      {i === 0 && <span className="text-sm text-muted">principal</span>}
                     </button>
                   );
                 })}
               </div>
               {!canSwap && (
-                <p className="mt-1 text-xs text-muted">
+                <p className="mt-1.5 text-sm text-muted">
                   Para trocar, remova as séries registradas.
                 </p>
               )}
-            </div>
+            </fieldset>
           )}
 
           {!entry.skipped && (
-            <>
-              <div className={`${SET_GRID} px-1 text-[0.7rem] text-muted`} aria-hidden>
-                <span className="text-center">#</span>
+            <div>
+              <div
+                className={`${SET_GRID} border-b border-border px-1.5 pb-1 text-xs font-semibold text-muted`}
+                aria-hidden
+              >
+                <span className="text-center">Série</span>
                 <span className="text-center">Carga (kg)</span>
                 <span className="text-center">Reps</span>
                 <span className="text-center">Falha</span>
                 <span />
               </div>
-              <ol className="flex flex-col gap-1" aria-label="Séries">
+              <ol className="mt-1 flex flex-col gap-1" aria-label="Séries">
                 {rows.map((row) => (
                   <SetRow
                     key={row.setIndex}
                     row={row}
                     incrementKg={exercise?.defaultIncrementKg ?? 2.5}
-                    accentText={style.text}
                     editMode={editMode}
                     isActive={row.setIndex === activeIndex}
                     {...(isLateral ? { dropKg: settings.lateralDropKg } : {})}
@@ -299,72 +316,72 @@ export function EntryCard({
                   />
                 ))}
               </ol>
-              <div className="flex flex-wrap gap-1">
+              <div className="mt-2 flex flex-wrap gap-1">
                 <button
                   type="button"
-                  className={smallBtn}
+                  className={lineBtn}
                   onClick={() => void addSetRow(session.id, entry.id)}
                 >
-                  <Plus aria-hidden size={16} /> Série
+                  <Plus aria-hidden size={18} strokeWidth={2.5} /> Série
                 </button>
                 {rows.length > 0 && (
                   <button
                     type="button"
-                    className={smallBtn}
+                    className={lineBtn}
                     aria-pressed={editMode}
                     onClick={() => {
                       setEditMode((v) => !v);
                     }}
                   >
-                    <Pencil aria-hidden size={16} />{' '}
+                    <Pencil aria-hidden size={18} />{' '}
                     {editMode ? 'Concluir edição' : 'Editar séries'}
                   </button>
                 )}
               </div>
-            </>
+            </div>
           )}
 
           <div className="flex flex-wrap items-center gap-1 border-t border-border pt-2">
             <button
               type="button"
-              className={smallBtn}
+              className={lineBtn}
               disabled={isFirst}
               onClick={() => void moveSessionEntry(session.id, entry.id, -1)}
               aria-label="Mover para cima"
             >
-              <ChevronUp aria-hidden size={18} />
+              <ChevronUp aria-hidden size={22} />
             </button>
             <button
               type="button"
-              className={smallBtn}
+              className={lineBtn}
               disabled={isLast}
               onClick={() => void moveSessionEntry(session.id, entry.id, 1)}
               aria-label="Mover para baixo"
             >
-              <ChevronDown aria-hidden size={18} />
+              <ChevronDown aria-hidden size={22} />
             </button>
-            <Link to={`/exercicio/${entry.exerciseId}`} className={smallBtn}>
-              <ChartLine aria-hidden size={16} /> Progresso
+            <Link to={`/exercicio/${entry.exerciseId}`} className={lineBtn}>
+              <ChartLine aria-hidden size={18} /> Progresso
             </Link>
             <span className="flex-1" />
             {entry.skipped ? (
               <button
                 type="button"
-                className={smallBtn}
+                className={lineBtn}
                 onClick={() => void setEntrySkipped(session.id, entry.id, false)}
               >
-                <Undo2 aria-hidden size={16} /> Retomar
+                <Undo2 aria-hidden size={18} /> Retomar
               </button>
             ) : (
               <button
                 type="button"
-                className={smallBtn}
+                className={lineBtn}
                 onClick={() => {
                   void setEntrySkipped(session.id, entry.id, true);
                   onToggle();
                 }}
               >
-                <SkipForward aria-hidden size={16} /> Pular
+                <SkipForward aria-hidden size={18} /> Pular
               </button>
             )}
           </div>

@@ -7,10 +7,9 @@ import { formatNumber } from '@/lib/format';
 export interface SetRowProps {
   row: SessionRow;
   incrementKg: number;
-  accentText: string;
   /** Modo edição da entrada: mostra a lixeira no lugar do ✓. */
   editMode: boolean;
-  /** Primeira série não confirmada (recebe o atalho do protocolo lateral). */
+  /** Primeira série não confirmada: a da vez (✓ amarelo, atalho do protocolo lateral). */
   isActive: boolean;
   /** Redução do "↓ reduzir"; ausente fora do protocolo lateral. */
   dropKg?: number;
@@ -27,10 +26,10 @@ export interface SetRowProps {
 
 /** Colunas: série | carga (stepper) | reps | falha | ✓ */
 export const SET_GRID =
-  'grid grid-cols-[1.25rem_minmax(0,1fr)_3.25rem_2.75rem_2.75rem] items-center gap-1.5';
+  'grid grid-cols-[1.5rem_minmax(0,1fr)_3.25rem_2.75rem_3rem] items-center gap-1.5';
 
-const iconBtn =
-  'flex size-11 items-center justify-center rounded-lg transition-colors disabled:opacity-40';
+const stepBtn =
+  'flex h-12 w-11 shrink-0 items-center justify-center rounded-[3px] text-current/70 hover:bg-current/10 hover:text-current disabled:opacity-30';
 
 const RPE_OPTIONS: { value: RpeNote; label: string }[] = [
   { value: 'facil', label: 'Fácil' },
@@ -41,7 +40,6 @@ const RPE_OPTIONS: { value: RpeNote; label: string }[] = [
 export function SetRow({
   row,
   incrementKg,
-  accentText,
   editMode,
   isActive,
   dropKg,
@@ -55,42 +53,42 @@ export function SetRow({
   onRpe,
 }: SetRowProps) {
   const n = row.setIndex;
-  return (
-    <li className={`rounded-lg px-1 py-1 ${row.confirmed ? 'bg-surface-2' : ''}`}>
-      <div className={SET_GRID}>
-        <span
-          className={`text-center text-sm font-semibold num ${row.confirmed ? accentText : 'text-muted'}`}
-        >
-          {n}
-        </span>
+  // Série registrada inverte a tinta (estado por inversão, não por ícone).
+  const tone = row.confirmed ? 'bg-text text-bg' : isActive ? 'bg-surface-2' : '';
 
-        <div className="flex items-center gap-0.5">
+  return (
+    <li className={`rounded-[3px] px-1.5 py-1 ${tone}`}>
+      <div className={SET_GRID}>
+        <span className="text-center text-lg font-bold num">{n}</span>
+
+        <div className="flex items-center">
           <button
             type="button"
             aria-label={`Diminuir carga da série ${n}`}
-            className={`${iconBtn} shrink-0 text-muted hover:text-text`}
+            className={stepBtn}
             disabled={row.weightKg <= 0}
             onClick={() => {
               onWeight(stepWeight(row.weightKg, incrementKg, -1));
             }}
           >
-            <Minus aria-hidden size={18} />
+            <Minus aria-hidden size={20} strokeWidth={2.5} />
           </button>
           <WeightInput
             key={row.weightKg}
             value={row.weightKg}
             label={`Carga da série ${n} (kg)`}
             onCommit={onWeight}
+            className="h-12 text-[1.375rem] font-bold tracking-[-0.02em]"
           />
           <button
             type="button"
             aria-label={`Aumentar carga da série ${n}`}
-            className={`${iconBtn} shrink-0 text-muted hover:text-text`}
+            className={stepBtn}
             onClick={() => {
               onWeight(stepWeight(row.weightKg, incrementKg, 1));
             }}
           >
-            <Plus aria-hidden size={18} />
+            <Plus aria-hidden size={20} strokeWidth={2.5} />
           </button>
         </div>
 
@@ -106,56 +104,65 @@ export function SetRow({
           type="button"
           aria-label={`Série ${n} até a falha`}
           aria-pressed={row.toFailure}
-          className={`${iconBtn} ${row.toFailure ? accentText : 'text-muted/50'}`}
+          className={`flex size-11 items-center justify-center rounded-[3px] ${
+            row.toFailure ? 'text-current' : 'text-current/35'
+          }`}
           onClick={() => {
             onFailure(!row.toFailure);
           }}
         >
-          <Flame aria-hidden size={20} fill={row.toFailure ? 'currentColor' : 'none'} />
+          <Flame
+            aria-hidden
+            size={22}
+            strokeWidth={2.25}
+            fill={row.toFailure ? 'currentColor' : 'none'}
+          />
         </button>
 
         {editMode ? (
           <button
             type="button"
             aria-label={`Remover série ${n}`}
-            className={`${iconBtn} text-danger`}
+            className="flex size-12 items-center justify-center rounded-[3px] border-2 border-current/40"
             onClick={onRemove}
           >
             <Trash2 aria-hidden size={20} />
           </button>
         ) : row.confirmed ? (
-          <span className={`flex size-11 items-center justify-center ${accentText}`}>
-            <Check aria-hidden size={24} strokeWidth={3} />
+          <span className="flex size-12 items-center justify-center">
+            <Check aria-hidden size={26} strokeWidth={3} />
             <span className="sr-only">Série {n} registrada</span>
           </span>
         ) : (
           <button
             type="button"
             aria-label={`Confirmar série ${n}`}
-            className={`${iconBtn} border border-border bg-bg text-text hover:bg-surface-2`}
+            className={`flex size-12 items-center justify-center rounded-[3px] ${
+              isActive
+                ? 'bg-sign text-on-sign'
+                : 'border-2 border-current/30 text-current/70 hover:border-current/60'
+            }`}
             onClick={onConfirm}
           >
-            <Check aria-hidden size={22} />
+            <Check aria-hidden size={24} strokeWidth={3} />
           </button>
         )}
       </div>
 
       {isActive && dropKg !== undefined && !editMode && (
-        <div className="mt-1 pl-7">
-          <button
-            type="button"
-            className="flex min-h-11 items-center gap-1.5 rounded-lg px-3 text-sm text-muted hover:text-text"
-            onClick={onDrop}
-          >
-            <ArrowDown aria-hidden size={16} />
-            Reduzir {formatNumber(dropKg)} kg nesta e nas próximas
-          </button>
-        </div>
+        <button
+          type="button"
+          className="mt-1 ml-7 flex min-h-11 items-center gap-2 text-base font-semibold text-current/80 hover:text-current"
+          onClick={onDrop}
+        >
+          <ArrowDown aria-hidden size={18} strokeWidth={2.5} />
+          Reduzir {formatNumber(dropKg)} kg nesta e nas próximas
+        </button>
       )}
 
       {askRpe && !editMode && (
         <div
-          className="mt-1 flex items-center gap-1 pl-7"
+          className="mt-1 ml-7 flex items-center gap-1"
           role="group"
           aria-label={`Como foi a série ${n}?`}
         >
@@ -164,8 +171,10 @@ export function SetRow({
               key={o.value}
               type="button"
               aria-pressed={row.rpeNote === o.value}
-              className={`min-h-11 rounded-full px-3 text-xs ${
-                row.rpeNote === o.value ? 'bg-text text-bg' : 'text-muted hover:text-text'
+              className={`min-h-11 rounded-[3px] px-3 text-sm font-semibold ${
+                row.rpeNote === o.value
+                  ? 'bg-current/20 text-current'
+                  : 'text-current/65 hover:text-current'
               }`}
               onClick={() => {
                 onRpe(row.rpeNote === o.value ? undefined : o.value);

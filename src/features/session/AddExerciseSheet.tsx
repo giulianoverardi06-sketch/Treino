@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import { useState } from 'react';
 import { Modal } from '@/components/Modal';
 import { MUSCLE_LABELS } from '@/domain/labels';
@@ -33,11 +33,6 @@ export function AddExerciseSheet({ exercises, onPick, onClose }: AddExerciseShee
     <Modal title="Adicionar exercício" onClose={onClose}>
       <label className="relative mb-3 block">
         <span className="sr-only">Buscar exercício</span>
-        <Search
-          aria-hidden
-          size={18}
-          className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted"
-        />
         <input
           type="search"
           value={query}
@@ -45,26 +40,34 @@ export function AddExerciseSheet({ exercises, onPick, onClose }: AddExerciseShee
             setQuery(e.target.value);
           }}
           placeholder="Nome ou grupo muscular"
-          className="h-11 w-full rounded-lg bg-bg pr-3 pl-10 text-text placeholder:text-muted"
+          className="h-12 w-full rounded-[3px] border-2 border-edge bg-surface pr-12 pl-3 text-base text-text"
+        />
+        <Search
+          aria-hidden
+          size={20}
+          className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-muted"
         />
       </label>
       {list.length === 0 ? (
-        <p className="py-6 text-center text-sm text-muted">Nenhum exercício encontrado.</p>
+        <p className="py-6 text-center text-base text-muted">Nenhum exercício encontrado.</p>
       ) : (
-        <ul className="flex flex-col">
+        <ul className="border-t border-border">
           {list.map((e) => (
-            <li key={e.id}>
+            <li key={e.id} className="border-b border-border">
               <button
                 type="button"
-                className="flex min-h-12 w-full flex-col justify-center rounded-lg px-2 py-1 text-left hover:bg-surface-2"
+                className="flex min-h-14 w-full items-center gap-3 py-2 text-left hover:bg-surface-2"
                 onClick={() => {
                   onPick(e.id);
                 }}
               >
-                <span>{e.name}</span>
-                <span className="text-xs text-muted">
-                  {e.primaryMuscles.map((m) => MUSCLE_LABELS[m]).join(', ')}
+                <span className="min-w-0 flex-1">
+                  <span className="block text-base font-semibold">{e.name}</span>
+                  <span className="block text-sm text-muted">
+                    {e.primaryMuscles.map((m) => MUSCLE_LABELS[m]).join(', ')}
+                  </span>
                 </span>
+                <Plus aria-hidden size={20} className="text-muted" />
               </button>
             </li>
           ))}

@@ -1,11 +1,18 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { AlertTriangle, ChevronRight, TrendingDown, TrendingUp, Minus } from 'lucide-react';
+import {
+  ChartLine,
+  ChevronRight,
+  Minus,
+  TrendingDown,
+  TrendingUp,
+  TriangleAlert,
+} from 'lucide-react';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
-import { LETTER_STYLES } from '@/components/letterStyles';
 import { PageHeader } from '@/components/PageHeader';
 import { Segmented } from '@/components/PeriodFilter';
 import { SessionChart, type ChartPoint } from '@/components/SessionChart';
+import { LetterTile, Tile } from '@/components/Sign';
 import { db } from '@/db/db';
 import { EQUIPMENT_LABELS, MUSCLE_LABELS } from '@/domain/labels';
 import { lateralInitialRepsMetric } from '@/domain/lateralMetric';
@@ -52,12 +59,12 @@ export function ExerciseDetailPage() {
     };
   }, [id]);
 
-  if (data === undefined) return <p className="text-sm text-muted">Carregando…</p>;
+  if (data === undefined) return <p className="text-base text-muted">Carregando…</p>;
   if (data === null) {
     return (
       <>
         <PageHeader title="Exercício" backTo="/progresso" historyBack />
-        <p className="text-sm text-muted">Exercício não encontrado.</p>
+        <p className="text-base text-muted">Exercício não encontrado.</p>
       </>
     );
   }
@@ -113,41 +120,49 @@ function ExerciseDetail({ data }: { data: DetailData }) {
 
   return (
     <>
-      <PageHeader title={exercise.name} backTo="/progresso" historyBack />
-      <p className="-mt-3 mb-4 text-sm text-muted">
-        {muscles} · {EQUIPMENT_LABELS[exercise.equipment]}
-      </p>
+      <PageHeader
+        title={exercise.name}
+        backTo="/progresso"
+        historyBack
+        subtitle={`${muscles} · ${EQUIPMENT_LABELS[exercise.equipment]}`}
+      />
 
       {stats.length === 0 ? (
-        <div className="rounded-xl bg-surface p-6 text-center text-sm text-muted">
-          Ainda sem registros deste exercício.
+        <div className="flex items-start gap-3 border-y border-border py-4 text-base">
+          <Tile icon={ChartLine} />
+          <p className="pt-2.5 font-semibold">Ainda sem registros deste exercício.</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
-          <p className="flex items-center gap-2 rounded-xl bg-surface px-4 py-3 text-sm">
-            <TrendIcon aria-hidden size={18} className="shrink-0 text-muted" />
+        <div className="flex flex-col gap-6">
+          <p className="-mx-4 flex min-h-16 items-center gap-3 bg-tile px-4 py-3 text-lg font-bold text-on-tile">
+            <TrendIcon aria-hidden size={26} strokeWidth={2.5} className="shrink-0" />
             {trendText(trend)}
           </p>
 
           {lateral && lateral.points.length > 0 && (
-            <section aria-labelledby="lateral-title" className="rounded-xl bg-surface p-4">
-              <h2 id="lateral-title" className="text-sm font-semibold">
+            <section aria-labelledby="lateral-title">
+              <h2 id="lateral-title" className="text-lg font-bold">
                 Séries iniciais (1–3) na carga inicial
               </h2>
-              <p className="text-xs text-muted">
+              <p className="mb-2 text-sm text-muted">
                 Soma das repetições por sessão, quando informadas.
               </p>
-              <ol className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm num">
+              <ol className="rounded-[4px] border-2 border-edge bg-surface px-3 num">
                 {lateral.points.slice(-6).map((p) => (
-                  <li key={p.sessionId}>
-                    <span className="text-muted">{formatShortDate(p.date)}:</span> {p.repsSum}{' '}
-                    <span className="text-muted">({formatKg(p.initialWeightKg)})</span>
+                  <li
+                    key={p.sessionId}
+                    className="flex min-h-12 items-center justify-between gap-3 border-b border-border text-base last:border-b-0"
+                  >
+                    <span className="text-muted">
+                      {formatShortDate(p.date)} · {formatKg(p.initialWeightKg)}
+                    </span>
+                    <span className="text-xl font-bold">{p.repsSum}</span>
                   </li>
                 ))}
               </ol>
               {lateral.warn && (
-                <p className="mt-3 flex items-start gap-2 rounded-lg bg-surface-2 px-3 py-2 text-sm">
-                  <AlertTriangle aria-hidden size={16} className="mt-0.5 shrink-0" />
+                <p className="mt-3 flex items-center gap-3 text-base font-semibold">
+                  <Tile icon={TriangleAlert} size="sm" />
                   Sem progressão nas séries iniciais há {lateral.sessionsWithoutIncrease} sessões
                 </p>
               )}
@@ -177,11 +192,11 @@ function ExerciseDetail({ data }: { data: DetailData }) {
             minPoints={1}
           />
 
-          <section aria-labelledby="records-title" className="rounded-xl bg-surface p-4">
-            <h2 id="records-title" className="mb-2 text-sm font-semibold">
+          <section aria-labelledby="records-title">
+            <h2 id="records-title" className="mb-2 text-lg font-bold">
               Recordes
             </h2>
-            <dl className="grid gap-2 text-sm">
+            <dl className="rounded-[4px] bg-tile px-4 py-1 text-on-tile">
               <RecordRow
                 label="Maior carga"
                 value={records.maxWeight ? formatKg(records.maxWeight.weightKg) : undefined}
@@ -207,32 +222,33 @@ function ExerciseDetail({ data }: { data: DetailData }) {
           </section>
 
           <section aria-labelledby="sessions-title">
-            <h2 id="sessions-title" className="mb-2 text-sm font-semibold text-muted">
+            <h2 id="sessions-title" className="mb-1 text-lg font-bold">
               Sessões no período ({inPeriod.length})
             </h2>
-            <ul className="flex flex-col gap-2">
+            <ul className="rounded-[4px] border-2 border-edge bg-surface px-3">
               {[...inPeriod].reverse().map((s) => {
                 const l = letter(s.sessionId);
                 return (
-                  <li key={s.sessionId}>
+                  <li key={s.sessionId} className="border-b border-border last:border-b-0">
                     <Link
                       to={`/historico/${s.sessionId}`}
-                      className={`flex min-h-14 items-center gap-3 rounded-xl border-l-4 bg-surface px-3 py-2 ${LETTER_STYLES[l].border}`}
+                      className="flex min-h-16 items-center gap-3 py-2 hover:bg-surface-2"
                     >
+                      <LetterTile letter={l} size="sm" />
                       <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-semibold">
+                        <span className="block text-base font-bold">
                           {`${formatShortDate(s.date)} · Treino ${l}`}
                         </span>
                         <span className="block text-sm text-muted num">{describeSets(s.sets)}</span>
                       </span>
-                      <ChevronRight aria-hidden size={18} className="text-muted" />
+                      <ChevronRight aria-hidden size={22} className="text-muted" />
                     </Link>
                   </li>
                 );
               })}
             </ul>
             {inPeriod.length < stats.length && (
-              <p className="mt-2 text-xs text-muted">
+              <p className="mt-2 text-sm text-muted">
                 {stats.length - inPeriod.length}{' '}
                 {plural(stats.length - inPeriod.length, 'sessão anterior', 'sessões anteriores')}{' '}
                 fora do período.
@@ -255,16 +271,16 @@ function RecordRow({
   date?: string | undefined;
 }) {
   return (
-    <div className="flex items-baseline justify-between gap-3">
-      <dt className="text-muted">{label}</dt>
+    <div className="flex min-h-14 items-center justify-between gap-3 border-b border-white/15 last:border-b-0">
+      <dt className="text-sm text-white/70">{label}</dt>
       <dd className="text-right num">
         {value ? (
           <>
-            <span className="font-semibold">{value}</span>
-            {date && <span className="ml-2 text-xs text-muted">{formatShortDate(date)}</span>}
+            <span className="block text-lg leading-tight font-bold">{value}</span>
+            {date && <span className="block text-xs text-white/70">{formatShortDate(date)}</span>}
           </>
         ) : (
-          <span className="text-muted">—</span>
+          <span className="text-white/70">—</span>
         )}
       </dd>
     </div>

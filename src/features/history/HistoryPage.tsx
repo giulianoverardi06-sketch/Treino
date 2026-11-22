@@ -1,13 +1,24 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { MessageSquareText } from 'lucide-react';
+import { History, MessageSquareText } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router';
 import { LetterFilter } from '@/components/LetterFilter';
-import { LETTER_STYLES } from '@/components/letterStyles';
 import { PageHeader } from '@/components/PageHeader';
+import { LetterTile, Tile } from '@/components/Sign';
 import { db } from '@/db/db';
 import { groupByMonth, historyItems } from '@/domain/history';
 import { LETTERS, type Letter } from '@/domain/types';
 import { formatDuration, formatMonthKey, formatWeekdayDate, plural } from '@/lib/format';
+
+/** Colunas do quadro: data | letra | treino | séries | tempo. */
+const BOARD_COLS =
+  'grid grid-cols-[3.75rem_2.25rem_minmax(0,1fr)_2.25rem_3.25rem] items-center gap-2';
+
+const boardDate = new Intl.DateTimeFormat('pt-BR', { weekday: 'short', day: 'numeric' });
+
+/** "sáb. 21" */
+function formatBoardDate(iso: string): string {
+  return boardDate.format(new Date(iso)).replace(',', '');
+}
 
 function parseLetter(value: string | null): Letter | undefined {
   return LETTERS.find((l) => l === value);
@@ -32,7 +43,7 @@ export function HistoryPage() {
   return (
     <>
       <PageHeader title="Histórico" />
-      <div className="mb-4">
+      <div className="mb-5">
         <LetterFilter
           label="Filtrar por treino"
           value={letter}
@@ -43,68 +54,82 @@ export function HistoryPage() {
       </div>
 
       {data === undefined ? (
-        <p className="text-sm text-muted">Carregando…</p>
+        <p className="text-base text-muted">Carregando…</p>
       ) : items.length === 0 ? (
-        <div className="rounded-xl bg-surface p-6 text-center text-sm text-muted">
+        <div className="flex items-start gap-3 border-y border-border py-4 text-base">
+          <Tile icon={History} />
           {data.sessions.length === 0 ? (
-            <>
-              <p>Nenhum treino concluído ainda.</p>
-              <p className="mt-1">Os treinos finalizados aparecem aqui.</p>
+            <div className="pt-1">
+              <p className="font-semibold">Nenhum treino concluído ainda.</p>
+              <p className="text-muted">Os treinos finalizados aparecem aqui.</p>
               <Link
                 to="/"
-                className="mt-3 inline-flex min-h-11 items-center font-semibold text-text"
+                className="mt-1 inline-flex min-h-11 items-center font-semibold underline underline-offset-4"
               >
                 Ir para o Início
               </Link>
-            </>
+            </div>
           ) : (
-            <p>Nenhum treino {letter} concluído ainda.</p>
+            <p className="pt-2.5 font-semibold">Nenhum treino {letter} concluído ainda.</p>
           )}
         </div>
       ) : (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-6">
           {groups.map((group) => (
             <section key={group.key} aria-labelledby={`mes-${group.key}`}>
-              <h2 id={`mes-${group.key}`} className="mb-2 text-sm font-semibold text-muted">
+              <h2
+                id={`mes-${group.key}`}
+                className="mb-2 border-b-2 border-edge pb-1 text-lg font-extrabold first-letter:uppercase"
+              >
                 {formatMonthKey(group.key)}
               </h2>
-              <ul className="flex flex-col gap-2">
-                {group.items.map(({ session, exercisesDone, totalSets, durationMin }) => {
-                  const style = LETTER_STYLES[session.letter];
-                  const name = templateName(session.templateId) ?? `Treino ${session.letter}`;
-                  const stats = [
-                    `${exercisesDone} ${plural(exercisesDone, 'exercício', 'exercícios')}`,
-                    `${totalSets} ${plural(totalSets, 'série', 'séries')}`,
-                    ...(durationMin !== undefined ? [formatDuration(durationMin)] : []),
-                  ].join(' · ');
-                  return (
-                    <li key={session.id}>
-                      <Link
-                        to={`/historico/${session.id}`}
-                        className={`flex min-h-16 items-center gap-3 rounded-xl border-l-4 bg-surface px-3 py-2 ${style.border}`}
-                      >
-                        <span className={`w-6 text-center text-2xl font-bold ${style.text}`}>
-                          {session.letter}
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate font-semibold">
-                            {`${formatWeekdayDate(session.startedAt)} · `}
-                            <span className="font-normal text-muted">{name}</span>
+              <div className="rounded-[4px] border-2 border-edge bg-surface num">
+                <div
+                  aria-hidden
+                  className={`${BOARD_COLS} border-b border-border px-3 py-1.5 text-xs font-semibold text-muted`}
+                >
+                  <span>Data</span>
+                  <span />
+                  <span>Treino</span>
+                  <span className="text-right">Séries</span>
+                  <span className="text-right">Tempo</span>
+                </div>
+                <ul>
+                  {group.items.map(({ session, totalSets, durationMin }) => {
+                    const name = templateName(session.templateId) ?? `Treino ${session.letter}`;
+                    return (
+                      <li key={session.id} className="border-b border-border last:border-b-0">
+                        <Link
+                          to={`/historico/${session.id}`}
+                          aria-label={`${formatWeekdayDate(session.startedAt)}, treino ${session.letter}: ${name}, ${totalSets} ${plural(totalSets, 'série', 'séries')}${durationMin !== undefined ? `, ${formatDuration(durationMin)}` : ''}`}
+                          className={`${BOARD_COLS} min-h-14 px-3 py-1.5 hover:bg-surface-2`}
+                        >
+                          <span className="text-base font-bold first-letter:uppercase">
+                            {formatBoardDate(session.startedAt)}
                           </span>
-                          <span className="block text-sm text-muted num">{stats}</span>
-                        </span>
-                        {session.notes && (
-                          <MessageSquareText
-                            aria-label="Tem observação"
-                            size={18}
-                            className="shrink-0 text-muted"
-                          />
-                        )}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+                          <LetterTile letter={session.letter} size="sm" />
+                          <span className="flex min-w-0 items-center gap-1.5 text-base">
+                            <span className="line-clamp-2 text-[0.9375rem] leading-tight">
+                              {name}
+                            </span>
+                            {session.notes && (
+                              <MessageSquareText
+                                aria-label="Tem observação"
+                                size={16}
+                                className="shrink-0 text-muted"
+                              />
+                            )}
+                          </span>
+                          <span className="text-right text-lg font-bold">{totalSets}</span>
+                          <span className="text-right text-base">
+                            {durationMin !== undefined ? formatDuration(durationMin) : '—'}
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             </section>
           ))}
         </div>

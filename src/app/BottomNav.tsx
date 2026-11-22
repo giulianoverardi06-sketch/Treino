@@ -25,15 +25,16 @@ function isTabActive(tab: Tab, pathname: string): boolean {
   return self || (tab.alsoActive ?? []).some(matches);
 }
 
+/** Barra preta de placa; a aba atual é o bloco amarelo ("você está aqui"). */
 export function BottomNav() {
   const { pathname } = useLocation();
 
   return (
     <nav
       aria-label="Navegação principal"
-      className="fixed inset-x-0 bottom-0 z-10 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)]"
+      className="fixed inset-x-0 bottom-0 z-10 bg-tile pb-[env(safe-area-inset-bottom)]"
     >
-      <ul className="mx-auto grid max-w-[480px] grid-cols-4">
+      <ul className="mx-auto grid max-w-[480px] grid-cols-4 gap-1 p-1">
         {tabs.map((tab) => {
           const active = isTabActive(tab, pathname);
           const Icon = tab.icon;
@@ -42,12 +43,12 @@ export function BottomNav() {
               <Link
                 to={tab.to}
                 aria-current={active ? 'page' : undefined}
-                className={`flex min-h-14 flex-col items-center justify-center gap-0.5 text-xs transition-colors ${
-                  active ? 'text-text' : 'text-muted hover:text-text'
+                className={`flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-[3px] text-[0.8125rem] font-semibold transition-colors ${
+                  active ? 'bg-sign text-on-sign' : 'text-white/70 hover:text-white'
                 }`}
               >
-                <Icon aria-hidden size={22} strokeWidth={active ? 2.4 : 1.8} />
-                <span className={active ? 'font-semibold' : undefined}>{tab.label}</span>
+                <Icon aria-hidden size={22} strokeWidth={active ? 2.5 : 2} />
+                <span>{tab.label}</span>
               </Link>
             </li>
           );

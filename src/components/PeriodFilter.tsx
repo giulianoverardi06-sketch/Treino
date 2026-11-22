@@ -10,7 +10,7 @@ interface SegmentedProps<T extends string> {
   onChange: (value: T) => void;
 }
 
-/** Controle segmentado (rádio) para períodos e afins. */
+/** Controle segmentado (rádio): segmentos encostados; o atual em tinta invertida. */
 export function Segmented<T extends string>({
   label,
   value,
@@ -18,7 +18,11 @@ export function Segmented<T extends string>({
   onChange,
 }: SegmentedProps<T>) {
   return (
-    <div role="radiogroup" aria-label={label} className="flex gap-1 rounded-xl bg-surface p-1">
+    <div
+      role="radiogroup"
+      aria-label={label}
+      className="flex rounded-[4px] border-2 border-edge p-0.5"
+    >
       {options.map((o) => (
         <button
           key={o.value}
@@ -28,8 +32,8 @@ export function Segmented<T extends string>({
           onClick={() => {
             onChange(o.value);
           }}
-          className={`min-h-11 flex-1 rounded-lg text-sm font-medium transition-colors ${
-            o.value === value ? 'bg-surface-2 text-text' : 'text-muted hover:text-text'
+          className={`min-h-11 flex-1 rounded-[2px] text-[0.9375rem] font-semibold transition-colors ${
+            o.value === value ? 'bg-text text-bg' : 'text-muted hover:text-text'
           }`}
         >
           {o.label}

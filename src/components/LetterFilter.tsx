@@ -7,14 +7,16 @@ interface LetterFilterProps {
   label: string;
 }
 
-/** Chips "Todos · A · B · C". */
+/** "Todos · A · B · C": o treino escolhido acende na própria cor de saguão. */
 export function LetterFilter({ value, onChange, label }: LetterFilterProps) {
   const options: (Letter | undefined)[] = [undefined, ...LETTERS];
   return (
-    <div role="radiogroup" aria-label={label} className="flex gap-1.5">
+    <div role="radiogroup" aria-label={label} className="flex gap-2">
       {options.map((letter) => {
         const selected = value === letter;
-        const selectedCls = letter ? `${LETTER_STYLES[letter].bg} text-bg` : 'bg-text text-bg';
+        const on = letter
+          ? `${LETTER_STYLES[letter].bg} text-white border-transparent`
+          : 'bg-text text-bg border-transparent';
         return (
           <button
             key={letter ?? 'todos'}
@@ -24,8 +26,8 @@ export function LetterFilter({ value, onChange, label }: LetterFilterProps) {
             onClick={() => {
               onChange(letter);
             }}
-            className={`min-h-11 min-w-11 rounded-full px-4 text-sm font-semibold transition-colors ${
-              selected ? selectedCls : 'bg-surface text-muted hover:text-text'
+            className={`min-h-11 min-w-12 rounded-[3px] border-2 px-4 text-base font-bold transition-colors ${
+              selected ? on : 'border-edge text-text hover:bg-surface-2'
             }`}
           >
             {letter ?? 'Todos'}

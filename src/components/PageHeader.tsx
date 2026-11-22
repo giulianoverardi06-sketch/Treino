@@ -1,9 +1,11 @@
-import { ChevronLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 
 interface PageHeaderProps {
   title: string;
+  /** Linha abaixo do título (ex.: nome do treino, data). */
+  subtitle?: ReactNode;
   /** Rota do botão "voltar". Sem valor, não mostra o botão. */
   backTo?: string;
   /**
@@ -16,15 +18,22 @@ interface PageHeaderProps {
 }
 
 const backCls =
-  '-ml-2 flex size-11 shrink-0 items-center justify-center rounded-full text-muted hover:text-text';
+  'flex size-11 shrink-0 items-center justify-center rounded-[3px] bg-tile text-on-tile hover:bg-black/80';
 
-export function PageHeader({ title, backTo, historyBack = false, actions }: PageHeaderProps) {
+export function PageHeader({
+  title,
+  subtitle,
+  backTo,
+  historyBack = false,
+  actions,
+}: PageHeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const canGoBack = historyBack && location.key !== 'default';
+  const icon = <ArrowLeft aria-hidden size={24} strokeWidth={2.5} />;
 
   return (
-    <header className="mb-4 flex min-h-11 items-center gap-2">
+    <header className="mb-5 flex items-start gap-3">
       {backTo !== undefined &&
         (canGoBack ? (
           <button
@@ -33,14 +42,19 @@ export function PageHeader({ title, backTo, historyBack = false, actions }: Page
             className={backCls}
             onClick={() => void navigate(-1)}
           >
-            <ChevronLeft aria-hidden size={24} />
+            {icon}
           </button>
         ) : (
           <Link to={backTo} aria-label="Voltar" className={backCls}>
-            <ChevronLeft aria-hidden size={24} />
+            {icon}
           </Link>
         ))}
-      <h1 className="flex-1 truncate text-xl font-semibold">{title}</h1>
+      <div className="min-w-0 flex-1 pt-0.5">
+        <h1 className="text-[1.75rem] leading-[1.1] font-extrabold tracking-[-0.01em] text-balance">
+          {title}
+        </h1>
+        {subtitle && <div className="mt-1 text-base text-muted">{subtitle}</div>}
+      </div>
       {actions}
     </header>
   );

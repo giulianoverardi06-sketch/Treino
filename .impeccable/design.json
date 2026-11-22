@@ -1,0 +1,416 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-21T13:00:00Z",
+  "title": "Design System: Treino ABC",
+  "extensions": {
+    "colorMeta": {
+      "sign": {
+        "role": "primary",
+        "displayName": "Amarelo de Sinalização",
+        "canonical": "#ffcc00",
+        "tonalRamp": [
+          "#3d3300",
+          "#5c4d00",
+          "#8a7300",
+          "#b89900",
+          "#e6bf00",
+          "#ffcc00",
+          "#ffe066",
+          "#fff5cc"
+        ]
+      },
+      "on-sign": {
+        "role": "primary",
+        "displayName": "Preto sobre Placa",
+        "canonical": "#0b0b0b"
+      },
+      "on-sign-muted": {
+        "role": "primary",
+        "displayName": "Oliva de Placa",
+        "canonical": "#3d3300"
+      },
+      "accent-a": {
+        "role": "secondary",
+        "displayName": "Vermelho de Saguão A",
+        "canonical": "#d0342c",
+        "tonalRamp": [
+          "#3b0d0a",
+          "#6b1712",
+          "#9a211a",
+          "#b42318",
+          "#d0342c",
+          "#e36a63",
+          "#f0a39e",
+          "#fbe1df"
+        ]
+      },
+      "accent-b": {
+        "role": "secondary",
+        "displayName": "Azul de Saguão B",
+        "canonical": "#3a8ff0",
+        "tonalRamp": [
+          "#0a1f3d",
+          "#10336b",
+          "#175cd3",
+          "#2a75e0",
+          "#3a8ff0",
+          "#6eaef5",
+          "#a8cff9",
+          "#e1eefd"
+        ]
+      },
+      "accent-c": {
+        "role": "secondary",
+        "displayName": "Verde-azulado de Saguão C",
+        "canonical": "#16a8a0",
+        "tonalRamp": [
+          "#053330",
+          "#085c56",
+          "#008a72",
+          "#0f968f",
+          "#16a8a0",
+          "#55c4be",
+          "#97ddd9",
+          "#daf4f2"
+        ]
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Preto de Placa",
+        "canonical": "#0b0b0b",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#1a1a1a",
+          "#262626",
+          "#3d3d3d",
+          "#5c5c5c",
+          "#b8b8b8",
+          "#e6e6e6",
+          "#ffffff"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Moldura",
+        "canonical": "#1a1a1a"
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Moldura Funda",
+        "canonical": "#262626"
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Fio de Separação",
+        "canonical": "#3d3d3d"
+      },
+      "edge": {
+        "role": "neutral",
+        "displayName": "Contorno de Controle",
+        "canonical": "#5c5c5c"
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Branco de Pictograma",
+        "canonical": "#ffffff"
+      },
+      "text-muted": {
+        "role": "neutral",
+        "displayName": "Cinza de Legenda",
+        "canonical": "#b8b8b8"
+      },
+      "tile": {
+        "role": "neutral",
+        "displayName": "Quadrado Preto",
+        "canonical": "#000000"
+      },
+      "on-tile": {
+        "role": "neutral",
+        "displayName": "Branco de Pictograma",
+        "canonical": "#ffffff"
+      },
+      "focus": {
+        "role": "neutral",
+        "displayName": "Foco (escuro)",
+        "canonical": "#ffcc00"
+      },
+      "bg-light": {
+        "role": "neutral",
+        "displayName": "Cinza de Superfície",
+        "canonical": "#e6e6e6"
+      },
+      "surface-light": {
+        "role": "neutral",
+        "displayName": "Moldura (claro)",
+        "canonical": "#ffffff"
+      },
+      "surface-2-light": {
+        "role": "neutral",
+        "displayName": "Moldura Funda (claro)",
+        "canonical": "#f2f2f2"
+      },
+      "border-light": {
+        "role": "neutral",
+        "displayName": "Fio de Separação (claro)",
+        "canonical": "#c4c4c4"
+      },
+      "edge-light": {
+        "role": "neutral",
+        "displayName": "Contorno de Controle (claro)",
+        "canonical": "#0b0b0b"
+      },
+      "text-light": {
+        "role": "neutral",
+        "displayName": "Tinta (claro)",
+        "canonical": "#0b0b0b"
+      },
+      "text-muted-light": {
+        "role": "neutral",
+        "displayName": "Cinza de Legenda (claro)",
+        "canonical": "#4a4a4a"
+      },
+      "tile-light": {
+        "role": "neutral",
+        "displayName": "Quadrado Preto (claro)",
+        "canonical": "#0b0b0b"
+      },
+      "accent-a-light": {
+        "role": "secondary",
+        "displayName": "Vermelho de Saguão A (claro)",
+        "canonical": "#b42318"
+      },
+      "accent-b-light": {
+        "role": "secondary",
+        "displayName": "Azul de Saguão B (claro)",
+        "canonical": "#175cd3"
+      },
+      "accent-c-light": {
+        "role": "secondary",
+        "displayName": "Verde-azulado de Saguão C (claro)",
+        "canonical": "#008a72"
+      },
+      "focus-light": {
+        "role": "neutral",
+        "displayName": "Foco (claro)",
+        "canonical": "#0b0b0b"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Letra monumental",
+        "purpose": "A letra do próximo treino na placa amarela; uso único por tela."
+      },
+      "headline": {
+        "displayName": "Título de página",
+        "purpose": "PageHeader."
+      },
+      "sign-title": {
+        "displayName": "Título de placa",
+        "purpose": "Nome do treino dentro da placa amarela."
+      },
+      "title": {
+        "displayName": "Título de folha",
+        "purpose": "Título do Modal."
+      },
+      "section": {
+        "displayName": "Seção",
+        "purpose": "Títulos de seção e de grupo; rótulo dos botões grandes."
+      },
+      "number": {
+        "displayName": "Número",
+        "purpose": "Carga editável e contagens; sempre tabular."
+      },
+      "body": {
+        "displayName": "Corpo",
+        "purpose": "Texto corrido e linhas de quadro."
+      },
+      "label": {
+        "displayName": "Rótulo",
+        "purpose": "Texto secundário, legendas, ações pequenas."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "flap",
+        "value": "flap 140ms cubic-bezier(0.16, 1, 0.3, 1) both; from perspective(400px) rotateX(-70deg), opacity 0.2; transform-origin top center",
+        "purpose": "Painel split-flap: a mensagem nova da placa, a série da vez e o toast descem para o lugar. Desligado com prefers-reduced-motion."
+      },
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Curva do flap."
+      },
+      {
+        "name": "color-transition",
+        "value": "150ms",
+        "purpose": "Duração padrão das transições de cor (hover, seleção)."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "transition-duration: 0ms; animation-duration: 0ms",
+        "purpose": "Aplicado a tudo sob prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "column",
+        "value": "480px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão go",
+      "kind": "button",
+      "refersTo": "button-go",
+      "description": "O próximo passo do caminho (Iniciar, Finalizar).",
+      "html": "<button class=\"ds-btn ds-btn-go\"><span class=\"ds-arrow\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></span><span>Finalizar treino</span></button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: flex-start; gap: 8px; border: 0; border-radius: 4px; font-family: 'Source Sans 3 Variable', 'Segoe UI', system-ui, sans-serif; font-weight: 600; cursor: pointer; transition: background-color 150ms, filter 150ms, border-color 150ms; } .ds-btn-go { min-height: 56px; padding: 0 16px; font-size: 1.125rem; background: var(--sign, #ffcc00); color: var(--on-sign, #0b0b0b); } .ds-btn-go:hover { filter: brightness(0.95); } .ds-btn-go:active { filter: brightness(0.9); } .ds-btn-go:focus-visible { outline: 3px solid var(--on-sign, #0b0b0b); outline-offset: 2px; } .ds-arrow { display: flex; width: 40px; height: 40px; flex-shrink: 0; align-items: center; justify-content: center; border: 2px solid currentColor; border-radius: 3px; }"
+    },
+    {
+      "name": "Botão ink",
+      "kind": "button",
+      "refersTo": "button-ink",
+      "description": "Preto de placa dentro da placa amarela, com a seta presa à borda.",
+      "html": "<div class=\"ds-ink-bg\"><button class=\"ds-btn-ink\"><span class=\"ds-arrow-ink\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></span><span>Iniciar treino B</span></button></div>",
+      "css": ".ds-ink-bg { background: var(--sign, #ffcc00); padding: 16px; } .ds-btn-ink { display: flex; width: 100%; align-items: center; justify-content: flex-start; gap: 8px; min-height: 56px; padding: 0 16px; border: 0; border-radius: 4px; background: var(--tile, #000); color: var(--on-tile, #fff); font-family: 'Source Sans 3 Variable', 'Segoe UI', system-ui, sans-serif; font-size: 1.125rem; font-weight: 600; cursor: pointer; transition: background-color 150ms; } .ds-btn-ink:hover { background: rgba(0,0,0,0.85); } .ds-btn-ink:focus-visible { outline: 3px solid var(--on-sign, #0b0b0b); outline-offset: 2px; } .ds-arrow-ink { display: flex; width: 40px; height: 40px; align-items: center; justify-content: center; border: 2px solid currentColor; border-radius: 3px; }"
+    },
+    {
+      "name": "Botão outline",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Ação secundária emoldurada.",
+      "html": "<button class=\"ds-btn-outline\">Cancelar</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 16px; border: 2px solid var(--edge, #5c5c5c); border-radius: 4px; background: transparent; color: var(--text, #fff); font-family: 'Source Sans 3 Variable', 'Segoe UI', system-ui, sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 150ms; } .ds-btn-outline:hover, .ds-btn-outline:active { background: var(--surface-2, #262626); } .ds-btn-outline:focus-visible { outline: 3px solid var(--focus, #ffcc00); outline-offset: 2px; }"
+    },
+    {
+      "name": "Botão solid",
+      "kind": "button",
+      "refersTo": "button-solid",
+      "description": "Tinta invertida do tema; confirmação em diálogo.",
+      "html": "<button class=\"ds-btn-solid\">Descartar</button>",
+      "css": ".ds-btn-solid { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 16px; border: 0; border-radius: 4px; background: var(--text, #fff); color: var(--bg, #0b0b0b); font-family: 'Source Sans 3 Variable', 'Segoe UI', system-ui, sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; transition: opacity 150ms; } .ds-btn-solid:hover { opacity: 0.9; } .ds-btn-solid:focus-visible { outline: 3px solid var(--focus, #ffcc00); outline-offset: 2px; }"
+    },
+    {
+      "name": "Quadro de partidas",
+      "kind": "card",
+      "refersTo": "board",
+      "description": "Recipiente comum de toda consulta (Histórico, Progresso, Exercício, gráficos, Resumo): moldura de 2px, linhas de fio de 1px, estado vazio dentro do quadro.",
+      "html": "<div class=\"ds-board\"><div class=\"ds-board-row\"><span class=\"ds-letter ds-letter-a\">A</span><span>Última A</span><b>18/11</b><span class=\"ds-muted\">há 3 dias</span></div><div class=\"ds-board-row\"><span class=\"ds-letter ds-letter-b\">B</span><span>Última B</span><b>14/11</b><span class=\"ds-muted\">há 7 dias</span></div><div class=\"ds-board-row\"><span class=\"ds-letter ds-letter-c\">C</span><span>Última C</span><b>20/11</b><span class=\"ds-muted\">ontem</span></div></div>",
+      "css": ".ds-board { border: 2px solid var(--edge, #5c5c5c); border-radius: 4px; background: var(--surface, #1a1a1a); color: var(--text, #fff); padding: 0 12px; font-family: 'Source Sans 3 Variable', 'Segoe UI', system-ui, sans-serif; font-variant-numeric: tabular-nums lining-nums; } .ds-board-row { display: grid; grid-template-columns: 2.25rem 1fr auto 4.75rem; align-items: center; gap: 12px; min-height: 56px; border-bottom: 1px solid var(--border, #3d3d3d); } .ds-board-row:last-child { border-bottom: 0; } .ds-board-row b { font-size: 1.125rem; font-weight: 700; } .ds-muted { text-align: right; font-size: 0.875rem; color: var(--text-muted, #b8b8b8); } .ds-letter { display: flex; width: 36px; height: 36px; align-items: center; justify-content: center; border-radius: 3px; color: #fff; font-size: 1.125rem; font-weight: 700; } .ds-letter-a { background: var(--accent-a, #d0342c); } .ds-letter-b { background: var(--accent-b, #3a8ff0); } .ds-letter-c { background: var(--accent-c, #16a8a0); }"
+    },
+    {
+      "name": "Placa amarela",
+      "kind": "custom",
+      "refersTo": "button-go",
+      "description": "Placa da próxima decisão: letra monumental, destino e detalhe; troca a mensagem com flap.",
+      "html": "<section class=\"ds-sign\"><div class=\"ds-sign-head\"><span class=\"ds-sign-letter\">B</span><div><h2 class=\"ds-sign-title\">Costas e bíceps</h2><p class=\"ds-sign-detail\">Próximo treino · último há 4 dias</p></div></div></section>",
+      "css": ".ds-sign { background: var(--sign, #ffcc00); color: var(--on-sign, #0b0b0b); padding: 16px; font-family: 'Source Sans 3 Variable', 'Segoe UI', system-ui, sans-serif; } .ds-sign-head { display: flex; align-items: center; gap: 16px; } .ds-sign-letter { margin: -12px 0; font-size: 8rem; line-height: 0.85; font-weight: 900; letter-spacing: -0.04em; transform-origin: top center; animation: ds-flap 140ms cubic-bezier(0.16, 1, 0.3, 1) both; } .ds-sign-title { margin: 0; font-size: 1.625rem; line-height: 1.05; font-weight: 800; } .ds-sign-detail { margin: 6px 0 0; font-size: 1rem; font-weight: 600; color: var(--on-sign-muted, #3d3300); font-variant-numeric: tabular-nums; } @keyframes ds-flap { from { transform: perspective(400px) rotateX(-70deg); opacity: 0.2; } to { transform: none; opacity: 1; } } @media (prefers-reduced-motion: reduce) { .ds-sign-letter { animation-duration: 0ms; } }"
+    },
+    {
+      "name": "Segmentado",
+      "kind": "chip",
+      "refersTo": "segmented-active",
+      "description": "Controle segmentado emoldurado; o atual em tinta invertida.",
+      "html": "<div class=\"ds-seg\" role=\"radiogroup\"><button class=\"ds-seg-opt\" aria-checked=\"true\">30 dias</button><button class=\"ds-seg-opt\" aria-checked=\"false\">90 dias</button><button class=\"ds-seg-opt\" aria-checked=\"false\">Tudo</button></div>",
+      "css": ".ds-seg { display: flex; padding: 2px; border: 2px solid var(--edge, #5c5c5c); border-radius: 4px; } .ds-seg-opt { flex: 1; min-height: 44px; border: 0; border-radius: 2px; background: transparent; color: var(--text-muted, #b8b8b8); font-family: 'Source Sans 3 Variable', 'Segoe UI', system-ui, sans-serif; font-size: 0.9375rem; font-weight: 600; cursor: pointer; transition: color 150ms, background-color 150ms; } .ds-seg-opt:hover { color: var(--text, #fff); } .ds-seg-opt[aria-checked=\"true\"] { background: var(--text, #fff); color: var(--bg, #0b0b0b); } .ds-seg-opt:focus-visible { outline: 3px solid var(--focus, #ffcc00); outline-offset: 2px; }"
+    },
+    {
+      "name": "Campo de carga",
+      "kind": "input",
+      "refersTo": "tile",
+      "description": "Campo numérico centrado e tabular que herda a tinta da linha.",
+      "html": "<input class=\"ds-input-num\" inputmode=\"decimal\" value=\"42,5\" aria-label=\"Carga\">",
+      "css": ".ds-input-num { width: 120px; height: 48px; border: 2px solid transparent; border-radius: 3px; background: transparent; color: var(--text, #fff); text-align: center; font-family: 'Source Sans 3 Variable', 'Segoe UI', system-ui, sans-serif; font-size: 1.75rem; font-weight: 700; font-variant-numeric: tabular-nums lining-nums; caret-color: var(--sign, #ffcc00); } .ds-input-num:hover { border-color: rgba(255,255,255,0.25); } .ds-input-num:focus { border-color: rgba(255,255,255,0.4); } .ds-input-num:focus-visible { outline: 3px solid var(--focus, #ffcc00); outline-offset: 2px; }"
+    },
+    {
+      "name": "Barra inferior",
+      "kind": "nav",
+      "refersTo": "nav-tab-active",
+      "description": "Barra preta de placa; a aba atual é o bloco amarelo.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-tab\" aria-current=\"page\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/></svg><span>Início</span></a><a class=\"ds-nav-tab\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/></svg><span>Histórico</span></a></nav>",
+      "css": ".ds-nav { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; padding: 4px; background: var(--tile, #000); font-family: 'Source Sans 3 Variable', 'Segoe UI', system-ui, sans-serif; } .ds-nav-tab { display: flex; min-height: 56px; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 3px; color: rgba(255,255,255,0.7); font-size: 0.8125rem; font-weight: 600; text-decoration: none; cursor: pointer; transition: color 150ms; } .ds-nav-tab:hover { color: #fff; } .ds-nav-tab[aria-current=\"page\"] { background: var(--sign, #ffcc00); color: var(--on-sign, #0b0b0b); } .ds-nav-tab:focus-visible { outline: 3px solid var(--focus, #ffcc00); outline-offset: 2px; }"
+    },
+    {
+      "name": "Toast",
+      "kind": "custom",
+      "refersTo": "toast",
+      "description": "Quadrado preto com ação amarela de desfazer; entra com flap.",
+      "html": "<div class=\"ds-toast\" role=\"status\"><span>Série removida</span><button class=\"ds-toast-act\">Desfazer</button></div>",
+      "css": ".ds-toast { display: flex; min-height: 56px; align-items: center; gap: 12px; padding: 4px 4px 4px 16px; border-radius: 4px; background: var(--tile, #000); color: var(--on-tile, #fff); font-family: 'Source Sans 3 Variable', 'Segoe UI', system-ui, sans-serif; font-size: 1rem; font-weight: 600; transform-origin: top center; animation: ds-toast-flap 140ms cubic-bezier(0.16, 1, 0.3, 1) both; } .ds-toast span { flex: 1; } .ds-toast-act { min-height: 48px; padding: 0 16px; border: 0; border-radius: 3px; background: var(--sign, #ffcc00); color: var(--on-sign, #0b0b0b); font: inherit; font-weight: 700; cursor: pointer; } .ds-toast-act:focus-visible { outline: 3px solid var(--on-sign, #0b0b0b); outline-offset: 2px; } @keyframes ds-toast-flap { from { transform: perspective(400px) rotateX(-70deg); opacity: 0.2; } to { transform: none; opacity: 1; } } @media (prefers-reduced-motion: reduce) { .ds-toast { animation-duration: 0ms; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Próximo Passo Sinalizado",
+    "overview": "O app se lê como a sinalização de um terminal: há sempre uma placa amarela dizendo para onde ir agora, e todo o resto é preto de placa, moldura e sequência numerada. Nas telas de decisão (Início, Sessão) a placa amarela carrega a próxima decisão; nas telas de consulta (Histórico, Progresso, Exercício) os dados aparecem como quadros de partidas emoldurados, linha a linha; cada linha de lista começa por um quadrado preto com pictograma ou número branco.\n\nA densidade é de uso com uma mão entre séries: alvos de 44px ou mais, ações da sessão na metade de baixo, números tabulares grandes, uma coluna central de no máximo 480px. O material é chapado e gráfico: sem sombras, sem gradientes, profundidade só por inversão de tinta e por molduras de 2px. Movimento é um único gesto, o painel split-flap: a mensagem nova desce para o lugar em 140ms.\n\nO mundo substituiu deliberadamente os cartões arredondados iguais e o tema escuro com acentos chapados da versão anterior.",
+    "keyCharacteristics": [
+      "Amarelo de sinalização reservado para caminho e próxima ação.",
+      "Quadrados pretos (tiles) com pictograma ou número branco à esquerda das linhas.",
+      "Quadrados de saguão A/B/C na cor validada de cada treino, letra em branco.",
+      "Molduras retas de 2px, raio de 2 a 4px, nunca maior.",
+      "Source Sans 3 Variable empacotada, pesos 800 a 900 nas placas, algarismos tabulares nos números.",
+      "Tema escuro por padrão; claro via `html[data-theme=\"light\"]`."
+    ],
+    "rules": [
+      {
+        "name": "The One Path Rule",
+        "body": "O amarelo de sinalização marca só o caminho: a próxima ação, a série da vez, a aba onde você está. Nada decorativo, nenhum estado de erro, nenhum gráfico é amarelo. Se dois elementos amarelos competem na mesma vista, um deles está errado.",
+        "section": "colors"
+      },
+      {
+        "name": "The Lobby Color Rule",
+        "body": "Cada treino tem uma cor e só uma; vermelho, azul e verde-azulado identificam A, B e C e não significam mais nada. A letra sobre elas é sempre branca.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink Inversion Rule",
+        "body": "Estado se mostra invertendo a tinta (`text` vira fundo, `bg` vira texto), não com uma cor nova: série registrada, segmento ativo, filtro \"Todos\" selecionado, confirmação em diálogo.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Todo número de carga, repetição, data e contagem usa o utilitário `num` (`tabular-nums lining-nums`) para que as colunas dos quadros alinhem dígito a dígito.",
+        "section": "typography"
+      },
+      {
+        "name": "The Heavy Sign Rule",
+        "body": "Placas e letras falam em 800 a 900; corpo fica em 400 a 700. Não existe peso leve no sistema.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Plate Rule",
+        "body": "Placas são impressas, não flutuam. Nada de `box-shadow`, gradiente ou desfoque; se algo precisa se destacar, troca de tinta ou ganha moldura.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Four Pixel Ceiling",
+        "body": "Nenhum raio passa de 4px.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Board Rule",
+        "body": "Consulta se lê num quadro de partidas: toda lista e todo gráfico de Histórico, Progresso, Exercício e Resumo ficam dentro de um quadro emoldurado de 2px em `edge` sobre `surface`, raio de 4px, com linhas separadas por fio de 1px.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "**Do** reservar `sign` (#FFCC00) para o caminho: próxima ação, série da vez, aba atual.",
+      "**Do** começar linhas de lista com um tile preto (pictograma ou número branco) ou com o quadrado de saguão do treino.",
+      "**Do** emoldurar quadros e placas secundárias com 2px em `edge` e separar linhas internas com 1px em `border`.",
+      "**Do** colocar toda lista e gráfico de consulta, e seu estado vazio, dentro de um quadro de partidas.",
+      "**Do** aplicar `num` a todo número exibido ou editável.",
+      "**Do** mostrar estado por inversão de tinta (`bg-text text-bg`).",
+      "**Do** manter alvos de toque em 44px ou mais e ações principais em 56px.",
+      "**Do** usar `flap` para trocar a mensagem da placa, com no máximo 150ms, e nenhum movimento sob `prefers-reduced-motion`."
+    ],
+    "donts": [
+      "**Don't** usar amarelo como decoração, cor de gráfico, erro ou destaque genérico.",
+      "**Don't** usar as cores de saguão para ações ou estados; elas só identificam A, B e C.",
+      "**Don't** passar de 4px de raio nem voltar aos cartões arredondados iguais da versão anterior.",
+      "**Don't** usar sombras, gradientes ou desfoque para dar profundidade.",
+      "**Don't** deixar lista ou gráfico de consulta solto na página, nem usar grade tracejada em gráfico.",
+      "**Don't** trocar a Source Sans 3 Variable por fonte sem algarismos tabulares ou carregada de CDN em runtime."
+    ]
+  }
+}

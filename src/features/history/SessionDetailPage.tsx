@@ -1,11 +1,12 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ChevronRight, Flame, Trash2 } from 'lucide-react';
+import { Ban, ChevronRight, Flame, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router';
-import { LETTER_STYLES } from '@/components/letterStyles';
+import { Button } from '@/components/Button';
 import { Modal } from '@/components/Modal';
 import { PageHeader } from '@/components/PageHeader';
 import { RepsInput, WeightInput } from '@/components/SetInputs';
+import { LetterTile, Tile } from '@/components/Sign';
 import { db } from '@/db/db';
 import { deleteSession, updateSessionNotes, updateSet } from '@/db/sessionRepo';
 import { orderedEntries } from '@/domain/sessionFactory';
@@ -47,13 +48,12 @@ export function SessionDetailPage() {
   return <SessionDetail data={data} />;
 }
 
-const SET_COLS = 'grid grid-cols-[1.5rem_minmax(0,1fr)_3.5rem_2.75rem] items-center gap-2';
+const SET_COLS = 'grid grid-cols-[2.5rem_minmax(0,1fr)_3.5rem_2.75rem] items-center gap-2';
 
 function SessionDetail({ data }: { data: DetailData }) {
   const { session, template, exercises, logs } = data;
   const navigate = useNavigate();
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const style = LETTER_STYLES[session.letter];
 
   const logsByEntry = new Map<string, SetLog[]>();
   for (const l of [...logs].sort((a, b) => a.setIndex - b.setIndex)) {
@@ -70,73 +70,91 @@ function SessionDetail({ data }: { data: DetailData }) {
 
   return (
     <>
-      <PageHeader title={`Treino ${session.letter}`} backTo="/historico" />
-      <div className="-mt-3 mb-4 text-sm text-muted">
-        {template && <p className="text-text">{template.name}</p>}
-        <p className="first-letter:uppercase">{formatLongDate(session.startedAt)}</p>
-        <p className="num">
-          {formatTime(session.startedAt)}
-          {session.finishedAt && `–${formatTime(session.finishedAt)}`}
-          {duration !== undefined && ` (${formatDuration(duration)})`}
-          {' · '}
-          {logs.length} {plural(logs.length, 'série', 'séries')}
+      <PageHeader
+        title={`Treino ${session.letter}`}
+        backTo="/historico"
+        historyBack
+        subtitle={template?.name}
+        actions={<LetterTile letter={session.letter} size="lg" />}
+      />
+      <dl className="-mt-1 mb-6 rounded-[4px] bg-tile px-4 py-1 text-on-tile num">
+        <div className="flex min-h-12 items-center justify-between gap-3 border-b border-white/15">
+          <dt className="text-sm text-white/70">Data</dt>
+          <dd className="text-base font-bold first-letter:uppercase">
+            {formatLongDate(session.startedAt)}
+          </dd>
+        </div>
+        <div className="flex min-h-12 items-center justify-between gap-3 border-b border-white/15">
+          <dt className="text-sm text-white/70">Horário</dt>
+          <dd className="text-base font-bold">
+            {formatTime(session.startedAt)}
+            {session.finishedAt && `–${formatTime(session.finishedAt)}`}
+            {duration !== undefined && ` · ${formatDuration(duration)}`}
+          </dd>
+        </div>
+        <div className="flex min-h-12 items-center justify-between gap-3">
+          <dt className="text-sm text-white/70">Séries</dt>
+          <dd className="text-base font-bold">
+            {logs.length} {plural(logs.length, 'série', 'séries')}
+          </dd>
+        </div>
+      </dl>
+      {session.status === 'descartada' && (
+        <p className="-mt-3 mb-5 flex items-center gap-3 text-base">
+          <Tile icon={Ban} size="sm" />
+          Sessão descartada: não conta no histórico.
         </p>
-        {session.status === 'descartada' && (
-          <p className="mt-1 inline-block rounded bg-surface-2 px-2 py-0.5 text-xs">
-            Sessão descartada — não conta no histórico
-          </p>
-        )}
-      </div>
+      )}
 
-      <ol className="flex flex-col gap-2" aria-label="Exercícios">
-        {orderedEntries(session).map((entry) => {
+      <ol className="border-t border-border" aria-label="Exercícios">
+        {orderedEntries(session).map((entry, index) => {
           const entryLogs = logsByEntry.get(entry.id) ?? [];
           const exercise = exercises.get(entry.exerciseId);
           const status = entry.skipped ? 'pulado' : entryLogs.length === 0 ? 'não feito' : null;
           return (
-            <li key={entry.id} className="rounded-xl bg-surface p-3">
-              <div className="flex items-start gap-2">
+            <li key={entry.id} className="border-b border-border py-3">
+              <div className="flex items-start gap-3">
+                <Tile>{index + 1}</Tile>
                 <div className="min-w-0 flex-1">
                   <Link
                     to={`/exercicio/${entry.exerciseId}`}
-                    className="inline-flex min-h-11 items-center gap-1 font-semibold"
+                    className="inline-flex min-h-11 items-center gap-1 text-lg leading-tight font-bold"
                   >
                     {exercise?.name ?? 'Exercício removido'}
-                    <ChevronRight aria-hidden size={16} className="text-muted" />
+                    <ChevronRight aria-hidden size={20} className="shrink-0 text-muted" />
                   </Link>
-                  {entry.slotId && <p className="-mt-2 text-xs text-muted">{entry.label}</p>}
+                  <p className="-mt-1.5 text-sm text-muted">
+                    {[entry.slotId ? entry.label : null, status].filter(Boolean).join(' · ')}
+                  </p>
                 </div>
-                {status && (
-                  <span className="mt-3 rounded bg-surface-2 px-1.5 py-0.5 text-xs text-muted">
-                    {status}
-                  </span>
-                )}
               </div>
 
               {entryLogs.length > 0 && (
-                <>
-                  <div className={`${SET_COLS} mt-2 text-[0.7rem] text-muted`} aria-hidden>
-                    <span className="text-center">#</span>
+                <div className="mt-2 pl-14">
+                  <div
+                    className={`${SET_COLS} border-b border-border pb-1 text-xs font-semibold text-muted`}
+                    aria-hidden
+                  >
+                    <span className="text-center">Série</span>
                     <span className="text-center">Carga (kg)</span>
                     <span className="text-center">Reps</span>
                     <span className="text-center">Falha</span>
                   </div>
                   <ol
-                    className="mt-1 flex flex-col gap-1"
+                    className="mt-1 flex flex-col"
                     aria-label={`Séries de ${exercise?.name ?? 'exercício'}`}
                   >
                     {entryLogs.map((log, i) => {
                       const n = i + 1;
                       return (
                         <li key={log.id} className={SET_COLS}>
-                          <span className={`text-center text-sm font-semibold num ${style.text}`}>
-                            {n}
-                          </span>
+                          <span className="text-center text-base font-bold num">{n}</span>
                           <WeightInput
                             key={log.weightKg}
                             value={log.weightKg}
                             label={`Carga da série ${n} de ${exercise?.name ?? 'exercício'} (kg)`}
                             onCommit={(kg) => void updateSet(log.id, { weightKg: kg })}
+                            className="h-12 text-xl font-bold"
                           />
                           <RepsInput
                             key={log.reps ?? 'vazio'}
@@ -150,13 +168,13 @@ function SessionDetail({ data }: { data: DetailData }) {
                             aria-label={`Série ${n} até a falha`}
                             aria-pressed={log.toFailure}
                             onClick={() => void updateSet(log.id, { toFailure: !log.toFailure })}
-                            className={`flex size-11 items-center justify-center rounded-lg ${
-                              log.toFailure ? style.text : 'text-muted/50'
+                            className={`flex size-11 items-center justify-center rounded-[3px] ${
+                              log.toFailure ? 'text-text' : 'text-muted/50'
                             }`}
                           >
                             <Flame
                               aria-hidden
-                              size={20}
+                              size={22}
                               fill={log.toFailure ? 'currentColor' : 'none'}
                             />
                           </button>
@@ -164,7 +182,7 @@ function SessionDetail({ data }: { data: DetailData }) {
                       );
                     })}
                   </ol>
-                </>
+                </div>
               )}
             </li>
           );
@@ -173,15 +191,18 @@ function SessionDetail({ data }: { data: DetailData }) {
 
       <NotesField session={session} />
 
-      <button
-        type="button"
-        onClick={() => {
-          setConfirmDelete(true);
-        }}
-        className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-border text-sm text-danger"
-      >
-        <Trash2 aria-hidden size={18} /> Excluir sessão
-      </button>
+      <div className="mt-10 border-t border-border pt-6">
+        <Button
+          variant="outline"
+          icon={Trash2}
+          className="w-full"
+          onClick={() => {
+            setConfirmDelete(true);
+          }}
+        >
+          Excluir sessão
+        </Button>
+      </div>
 
       {confirmDelete && (
         <Modal
@@ -191,26 +212,22 @@ function SessionDetail({ data }: { data: DetailData }) {
           }}
           footer={
             <>
-              <button
-                type="button"
-                className="min-h-12 flex-1 rounded-xl border border-border font-medium"
+              <Button
+                variant="outline"
+                className="flex-1"
                 onClick={() => {
                   setConfirmDelete(false);
                 }}
               >
                 Cancelar
-              </button>
-              <button
-                type="button"
-                className="min-h-12 flex-1 rounded-xl bg-danger font-semibold text-white"
-                onClick={() => void remove()}
-              >
+              </Button>
+              <Button variant="solid" className="flex-1" onClick={() => void remove()}>
                 Excluir
-              </button>
+              </Button>
             </>
           }
         >
-          <p className="text-sm text-muted">
+          <p className="text-base text-muted">
             O treino de {formatLongDate(session.startedAt)} e suas {logs.length}{' '}
             {plural(logs.length, 'série', 'séries')} serão apagados definitivamente. Não dá para
             desfazer.
@@ -224,8 +241,8 @@ function SessionDetail({ data }: { data: DetailData }) {
 function NotesField({ session }: { session: Session }) {
   const [text, setText] = useState(session.notes ?? '');
   return (
-    <label className="mt-4 block">
-      <span className="mb-1 block text-sm text-muted">Observação</span>
+    <label className="mt-6 block">
+      <span className="mb-1 block text-base font-semibold">Observação</span>
       <textarea
         value={text}
         rows={2}
@@ -236,7 +253,7 @@ function NotesField({ session }: { session: Session }) {
           if (text.trim() !== (session.notes ?? '')) void updateSessionNotes(session.id, text);
         }}
         placeholder="Sem observação"
-        className="w-full rounded-lg bg-surface p-3 text-text placeholder:text-muted"
+        className="w-full rounded-[3px] border-2 border-edge bg-surface p-3 text-base text-text"
       />
     </label>
   );

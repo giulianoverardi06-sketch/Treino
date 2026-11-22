@@ -1,6 +1,8 @@
 import { Trophy } from 'lucide-react';
 import { useState } from 'react';
+import { Button } from '@/components/Button';
 import { Modal } from '@/components/Modal';
+import { Tile } from '@/components/Sign';
 import { summarizeSession, type RecordKind } from '@/domain/sessionSummary';
 import type { SessionData } from './useSessionData';
 
@@ -29,56 +31,59 @@ export function FinishSheet({ data, onConfirm, onClose }: FinishSheetProps) {
       onClose={onClose}
       footer={
         <>
-          <button
-            type="button"
-            className="min-h-12 flex-1 rounded-xl border border-border font-medium"
-            onClick={onClose}
-          >
+          <Button variant="outline" className="flex-1" onClick={onClose}>
             Voltar
-          </button>
-          <button
-            type="button"
-            className="min-h-12 flex-1 rounded-xl bg-text font-semibold text-bg"
+          </Button>
+          <Button
+            variant="go"
+            arrow
+            className="flex-[2] justify-start"
             onClick={() => {
               onConfirm(notes);
             }}
           >
             Concluir treino
-          </button>
+          </Button>
         </>
       }
     >
-      <dl className="mb-4 grid grid-cols-2 gap-2">
-        <div className="rounded-xl bg-surface-2 p-3">
-          <dt className="text-xs text-muted">Exercícios feitos</dt>
-          <dd className="text-2xl font-semibold num">{summary.exercisesDone}</dd>
+      <dl className="mb-4 grid grid-cols-2 divide-x divide-white/15 rounded-[4px] bg-tile px-4 py-3 text-on-tile num">
+        <div className="pr-3">
+          <dt className="text-sm text-white/70">Exercícios feitos</dt>
+          <dd className="text-[2rem] leading-tight font-bold">{summary.exercisesDone}</dd>
         </div>
-        <div className="rounded-xl bg-surface-2 p-3">
-          <dt className="text-xs text-muted">Séries</dt>
-          <dd className="text-2xl font-semibold num">{summary.totalSets}</dd>
+        <div className="pl-4">
+          <dt className="text-sm text-white/70">Séries</dt>
+          <dd className="text-[2rem] leading-tight font-bold">{summary.totalSets}</dd>
         </div>
       </dl>
 
       {summary.totalSets === 0 && (
-        <p className="mb-4 text-sm text-muted">
+        <p className="mb-4 text-base text-muted">
           Nenhuma série registrada. Se não treinou, prefira descartar a sessão.
         </p>
       )}
 
       {summary.records.length > 0 && (
         <section className="mb-4" aria-labelledby="records-title">
-          <h3 id="records-title" className="mb-2 flex items-center gap-1.5 text-sm font-semibold">
-            <Trophy aria-hidden size={16} /> Recordes
+          <h3 id="records-title" className="mb-2 text-lg font-bold">
+            Recordes
           </h3>
-          <ul className="flex flex-col gap-1 text-sm">
+          <ul className="border-t border-border">
             {summary.records.map((r) => (
-              <li key={r.exerciseId}>
-                <span className="font-medium">
-                  {data.exercises.get(r.exerciseId)?.name ?? r.exerciseId}
-                </span>
-                <span className="text-muted">
-                  {' '}
-                  — {r.kinds.map((k) => RECORD_LABELS[k]).join(', ')}
+              <li
+                key={r.exerciseId}
+                className="flex items-center gap-3 border-b border-border py-2"
+              >
+                <Tile icon={Trophy} size="sm" />
+                <span className="text-base">
+                  <span className="font-semibold">
+                    {data.exercises.get(r.exerciseId)?.name ?? r.exerciseId}
+                  </span>
+                  <span className="text-muted">
+                    {' · '}
+                    {r.kinds.map((k) => RECORD_LABELS[k]).join(', ')}
+                  </span>
                 </span>
               </li>
             ))}
@@ -87,14 +92,14 @@ export function FinishSheet({ data, onConfirm, onClose }: FinishSheetProps) {
       )}
 
       <label className="block">
-        <span className="mb-1 block text-sm text-muted">Observação (opcional)</span>
+        <span className="mb-1 block text-base font-semibold">Observação (opcional)</span>
         <textarea
           value={notes}
           onChange={(e) => {
             setNotes(e.target.value);
           }}
           rows={3}
-          className="w-full rounded-lg bg-bg p-3 text-text"
+          className="w-full rounded-[3px] border-2 border-edge bg-surface p-3 text-base text-text"
         />
       </label>
     </Modal>

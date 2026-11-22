@@ -53,7 +53,7 @@ describe('Início', () => {
     expect(
       await screen.findByRole('heading', { name: /Treino A: Peito, ombro e tríceps/ }),
     ).toBeInTheDocument();
-    expect(within(nextCard()).getByText('Ainda não feito')).toBeInTheDocument();
+    expect(within(nextCard()).getByText(/ainda não feito/)).toBeInTheDocument();
     expect(screen.queryByText(/backup/i)).toBeNull();
   });
 
@@ -64,7 +64,7 @@ describe('Início', () => {
     expect(
       await screen.findByRole('heading', { name: /Treino C: Pernas e core/ }),
     ).toBeInTheDocument();
-    expect(within(nextCard()).getByText('Ainda não feito')).toBeInTheDocument();
+    expect(within(nextCard()).getByText(/ainda não feito/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Iniciar treino A/ })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Iniciar treino B/ })).toBeInTheDocument();
   });
@@ -74,7 +74,7 @@ describe('Início', () => {
     await doneSession('A', 10, ['supino-inclinado-maquina', 'rosca-direta-polia']);
     renderHome();
     await screen.findByRole('heading', { name: /Treino B/ });
-    expect(within(nextCard()).getByText(/Bíceps trabalhado (hoje|ontem)/)).toBeInTheDocument();
+    expect(screen.getByText(/Bíceps trabalhado (hoje|ontem)/)).toBeInTheDocument();
   });
 
   it('sem aviso quando só coincide grupo secundário', async () => {
@@ -84,7 +84,7 @@ describe('Início', () => {
     await doneSession('B', 5, ['supino-inclinado-maquina']);
     renderHome();
     await screen.findByRole('heading', { name: /Treino C/ });
-    expect(within(nextCard()).queryByText(/trabalhad/)).toBeNull();
+    expect(screen.queryByText(/trabalhad/)).toBeNull();
   });
 
   it('iniciar pela sugestão abre a sessão', async () => {

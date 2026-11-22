@@ -9,8 +9,8 @@ interface ModalProps {
 }
 
 /**
- * Folha inferior modal (bottom sheet). Fecha com Esc ou toque fora; foca o primeiro
- * controle ao abrir e devolve o foco ao fechar.
+ * Folha inferior modal. Fecha com Esc ou toque fora; foca o primeiro controle ao abrir e devolve
+ * o foco ao fechar.
  */
 export function Modal({ title, onClose, children, footer }: ModalProps) {
   const titleId = useId();
@@ -40,16 +40,16 @@ export function Modal({ title, onClose, children, footer }: ModalProps) {
 
   return (
     <div className="fixed inset-0 z-40 flex items-end justify-center">
-      <div aria-hidden className="absolute inset-0 bg-black/60" onClick={onClose} />
+      <div aria-hidden className="absolute inset-0 bg-black/70" onClick={onClose} />
       <div
         ref={panel}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className="relative flex max-h-[85dvh] w-full max-w-[480px] flex-col rounded-t-2xl border-t border-border bg-surface pb-[env(safe-area-inset-bottom)]"
+        className="relative flex max-h-[85dvh] w-full max-w-[480px] flex-col border-t-4 border-edge bg-surface pb-[env(safe-area-inset-bottom)]"
       >
-        <h2 id={titleId} className="px-4 pt-4 pb-2 text-lg font-semibold">
+        <h2 id={titleId} className="px-4 pt-5 pb-3 text-[1.375rem] leading-tight font-bold">
           {title}
         </h2>
         <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4">{children}</div>

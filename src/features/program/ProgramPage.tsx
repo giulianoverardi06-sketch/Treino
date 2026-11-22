@@ -1,8 +1,9 @@
 import { useLiveQuery } from 'dexie-react-hooks';
+import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router';
-import { LETTER_STYLES } from '@/components/letterStyles';
 import { PageHeader } from '@/components/PageHeader';
 import { ProgramTabs } from '@/components/ProgramTabs';
+import { LetterTile } from '@/components/Sign';
 import { db } from '@/db/db';
 
 export function ProgramPage() {
@@ -13,32 +14,30 @@ export function ProgramPage() {
       <PageHeader title="Programa" />
       <ProgramTabs />
       {templates === undefined ? (
-        <p className="text-sm text-muted">Carregando…</p>
+        <p className="text-base text-muted">Carregando…</p>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="border-t border-border">
           {templates.map((t) => {
-            const style = LETTER_STYLES[t.letter];
             const optional = t.slots.filter((s) => s.optional).length;
             return (
-              <li key={t.id}>
+              <li key={t.id} className="border-b border-border">
                 <Link
                   to={`/programa/${t.letter}`}
                   aria-label={`Treino ${t.letter}: ${t.name}`}
-                  className={`flex min-h-14 items-center gap-4 rounded-xl border-l-4 bg-surface px-4 py-3 ${style.border}`}
+                  className="flex min-h-20 items-center gap-4 py-3 hover:bg-surface-2"
                 >
-                  <span className={`text-3xl font-bold ${style.text}`} aria-hidden>
-                    {t.letter}
-                  </span>
+                  <LetterTile letter={t.letter} size="lg" />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate font-semibold">{t.name}</span>
+                    <span className="block text-lg leading-tight font-bold">{t.name}</span>
                     <span className="block truncate text-sm text-muted">{t.emphasis}</span>
-                    <span className="block text-xs text-muted num">
+                    <span className="block text-sm font-semibold num">
                       {`${t.slots.length} exercícios` +
                         (optional > 0
                           ? ` · ${optional} ${optional > 1 ? 'opcionais' : 'opcional'}`
                           : '')}
                     </span>
                   </span>
+                  <ChevronRight aria-hidden size={22} className="text-muted" />
                 </Link>
               </li>
             );

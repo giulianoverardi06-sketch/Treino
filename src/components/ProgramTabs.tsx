@@ -1,14 +1,17 @@
 import { NavLink } from 'react-router';
 
-/** Subabas da aba Programa: Templates (A/B/C) e Biblioteca. */
+/** Subabas da aba Programa: Treinos (A/B/C) e Biblioteca. */
 export function ProgramTabs() {
-  const base =
-    'flex min-h-11 flex-1 items-center justify-center rounded-lg text-sm font-medium transition-colors';
   const cls = ({ isActive }: { isActive: boolean }) =>
-    `${base} ${isActive ? 'bg-surface-2 text-text' : 'text-muted hover:text-text'}`;
+    `flex min-h-11 flex-1 items-center justify-center rounded-[2px] text-[0.9375rem] font-semibold transition-colors ${
+      isActive ? 'bg-text text-bg' : 'text-muted hover:text-text'
+    }`;
 
   return (
-    <nav aria-label="Seções do programa" className="mb-4 flex gap-1 rounded-xl bg-surface p-1">
+    <nav
+      aria-label="Seções do programa"
+      className="mb-5 flex rounded-[4px] border-2 border-edge p-0.5"
+    >
       <NavLink to="/programa" end className={cls}>
         Treinos
       </NavLink>
