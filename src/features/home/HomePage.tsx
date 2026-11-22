@@ -1,9 +1,28 @@
-import { Settings } from 'lucide-react';
-import { Link } from 'react-router';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { Play, Settings } from 'lucide-react';
+import { Link, useNavigate } from 'react-router';
+import { LETTER_STYLES } from '@/components/letterStyles';
 import { PageHeader } from '@/components/PageHeader';
-import { Placeholder } from '@/components/Placeholder';
+import { db } from '@/db/db';
+import { findSessionInProgress, startSession } from '@/db/sessionRepo';
+import { LETTERS, type Letter } from '@/domain/types';
 
+/**
+ * Início provisório (Fase 2): iniciar A/B/C ou continuar a sessão em andamento.
+ * O card de próximo treino, o aviso de sobreposição e o resumo entram na Fase 3.
+ */
 export function HomePage() {
+  const navigate = useNavigate();
+  const state = useLiveQuery(async () => ({
+    current: (await findSessionInProgress()) ?? null,
+    templates: await db.templates.orderBy('letter').toArray(),
+  }));
+
+  async function start(letter: Letter) {
+    const id = await startSession(letter);
+    void navigate(`/sessao/${id}`);
+  }
+
   return (
     <>
       <PageHeader
@@ -18,14 +37,51 @@ export function HomePage() {
           </Link>
         }
       />
-      <div className="mb-4 flex gap-2" aria-hidden>
-        <span className="h-1.5 flex-1 rounded-full bg-letter-a" />
-        <span className="h-1.5 flex-1 rounded-full bg-letter-b" />
-        <span className="h-1.5 flex-1 rounded-full bg-letter-c" />
-      </div>
-      <Placeholder phase={3}>
-        <p className="mt-1">Próximo treino, aviso de sobreposição e “continuar sessão”.</p>
-      </Placeholder>
+
+      {state === undefined ? (
+        <p className="text-sm text-muted">Carregando…</p>
+      ) : state.current ? (
+        <Link
+          to={`/sessao/${state.current.id}`}
+          className={`flex min-h-20 items-center gap-4 rounded-2xl px-5 font-semibold text-bg ${
+            LETTER_STYLES[state.current.letter].bg
+          }`}
+        >
+          <Play aria-hidden size={24} fill="currentColor" />
+          <span>
+            <span className="block text-lg">Continuar sessão</span>
+            <span className="block text-sm font-normal">Treino {state.current.letter}</span>
+          </span>
+        </Link>
+      ) : (
+        <ul className="flex flex-col gap-2">
+          {LETTERS.map((letter) => {
+            const t = state.templates.find((x) => x.letter === letter);
+            const style = LETTER_STYLES[letter];
+            return (
+              <li key={letter}>
+                <button
+                  type="button"
+                  onClick={() => void start(letter)}
+                  className={`flex min-h-16 w-full items-center gap-4 rounded-xl border-l-4 bg-surface px-4 text-left ${style.border}`}
+                >
+                  <span className={`text-3xl font-bold ${style.text}`} aria-hidden>
+                    {letter}
+                  </span>
+                  <span className="flex-1">
+                    <span className="block font-semibold">Iniciar treino {letter}</span>
+                    {t && <span className="block text-sm text-muted">{t.name}</span>}
+                  </span>
+                  <Play aria-hidden size={20} className="text-muted" />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      <p className="mt-6 text-center text-xs text-muted">
+        Sugestão do próximo treino e resumo: Fase 3.
+      </p>
     </>
   );
 }

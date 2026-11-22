@@ -24,10 +24,14 @@ describe('rotas e layout', () => {
     ['/biblioteca', 'Programa'],
     ['/biblioteca/e1', 'Editar exercício'],
     ['/config', 'Configurações'],
-    ['/sessao/s1', 'Sessão'],
   ])('%s renderiza "%s"', (path, title) => {
     renderAt(path);
     expect(screen.getByRole('heading', { level: 1, name: title })).toBeInTheDocument();
+  });
+
+  it('sessão inexistente mostra aviso', async () => {
+    renderAt('/sessao/nao-existe');
+    expect(await screen.findByText('Sessão não encontrada.')).toBeInTheDocument();
   });
 
   it('rota desconhecida volta para o Início', () => {
