@@ -1,5 +1,6 @@
-import { ChevronDown, ChevronUp, Pencil, Plus, SkipForward, Undo2 } from 'lucide-react';
+import { ChartLine, ChevronDown, ChevronUp, Pencil, Plus, SkipForward, Undo2 } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router';
 import { ExerciseImage } from '@/components/ExerciseImage';
 import { LETTER_STYLES } from '@/components/letterStyles';
 import { useToast } from '@/components/Toast';
@@ -342,6 +343,9 @@ export function EntryCard({
             >
               <ChevronDown aria-hidden size={18} />
             </button>
+            <Link to={`/exercicio/${entry.exerciseId}`} className={smallBtn}>
+              <ChartLine aria-hidden size={16} /> Progresso
+            </Link>
             <span className="flex-1" />
             {entry.skipped ? (
               <button

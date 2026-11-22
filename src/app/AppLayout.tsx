@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from 'react-router';
+import { Outlet, ScrollRestoration, useLocation } from 'react-router';
 import { ToastProvider } from '@/components/Toast';
 import { BottomNav } from './BottomNav';
 
@@ -15,6 +15,8 @@ export function AppLayout() {
         </main>
         {showNav && <BottomNav />}
       </div>
+      {/* Tela nova abre no topo; "voltar" restaura a rolagem de antes. */}
+      <ScrollRestoration />
     </ToastProvider>
   );
 }

@@ -17,7 +17,6 @@ describe('rotas e layout', () => {
     ['/', 'Treino ABC'],
     ['/historico', 'Histórico'],
     ['/progresso', 'Progresso'],
-    ['/exercicio/e1', 'Exercício'],
     ['/programa', 'Programa'],
     ['/programa/b', 'Treino B'],
     ['/biblioteca', 'Programa'],
@@ -31,6 +30,11 @@ describe('rotas e layout', () => {
   it.each(['/sessao/nao-existe', '/historico/nao-existe'])('%s mostra aviso', async (path) => {
     renderAt(path);
     expect(await screen.findByText('Sessão não encontrada.')).toBeInTheDocument();
+  });
+
+  it('exercício inexistente mostra aviso', async () => {
+    renderAt('/exercicio/nao-existe');
+    expect(await screen.findByText('Exercício não encontrado.')).toBeInTheDocument();
   });
 
   it('rota desconhecida volta para o Início', () => {

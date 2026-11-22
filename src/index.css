@@ -13,9 +13,10 @@
   --border: #2a2f38;
   --text: #f2f4f7;
   --text-muted: #9aa3b2;
-  --accent-a: #ff7a45; /* A — Peito, ombro e tríceps */
-  --accent-b: #3fa9ff; /* B — Costas e bíceps */
-  --accent-c: #4fd18b; /* C — Pernas e core */
+  /* Validadas como paleta categórica (CVD, contraste, faixa de luminosidade) nas duas superfícies. */
+  --accent-a: #e7652e; /* A — Peito, ombro e tríceps */
+  --accent-b: #2998ed; /* B — Costas e bíceps */
+  --accent-c: #1bad69; /* C — Pernas e core */
   --danger: #ff5c5c;
   --focus: #ffd166;
 }

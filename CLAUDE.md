@@ -11,7 +11,8 @@
   - [x] Fase 2 — sessão ativa (5.2 e 5.3); Início provisório com iniciar A/B/C e continuar
   - [x] Fase 3 — Início com próximo treino, sobreposição e continuar sessão
   - [x] Fase 4 — Histórico (5.4) e edição de séries passadas
-  - [ ] Fase 5 — Progressão e gráficos (5.5)
+  - [x] Fase 5 — Progressão e gráficos (5.5)
+  - [ ] Fase 6 — Programa e biblioteca (5.6 e 5.7), sem imagens
 
 ## Decisões que desviam ou completam o SPEC
 
@@ -41,6 +42,17 @@
 - Excluir sessão apaga a sessão e as séries dela de vez (com confirmação; sem desfazer).
 - Nomes acessíveis compostos usam `aria-label` em vez de `sr-only` + texto (o espaço entre
   elementos se perde no cálculo do nome).
+- Cores das letras no tema escuro validadas como paleta categórica (script do skill dataviz):
+  `#e7652e`, `#2998ed`, `#1bad69`. Gráficos usam os tokens por classe CSS (`fill-letter-a` etc.),
+  porque o Recharts escreve cores como atributo SVG.
+- Gráficos: ponto colorido pela letra da sessão; um único eixo; tooltip; tabela em "Ver tabela".
+- "Séries por sessão" = séries registradas (não só as até a falha).
+- Recordes do exercício são de todo o histórico; o período filtra gráficos e lista.
+- Tendência: estável se a carga máxima repete nas últimas 3+ sessões; senão compara a última com a
+  primeira de uma janela de até 5 sessões.
+- Métrica lateral só usa sessões em que a entrada do exercício estava no protocolo `drop_lateral`.
+- Equilíbrio empurrar/puxar: peito superior conta como peito.
+- Bundle passou de 500 kB por causa do Recharts; dividir as rotas de gráfico na Fase 9.
 
 ## Comandos
 
