@@ -44,14 +44,25 @@ export interface OverlapInput {
  * primários em exercícios executados numa sessão concluída nas últimas `windowHours` (24h).
  * Grupos secundários não contam. Retorna na ordem de `muscles`; vazio = sem aviso.
  */
-export function overlapWarning({
+export function overlapWarning(input: OverlapInput): MuscleGroup[] {
+  return overlapDetails(input).map((d) => d.muscle);
+}
+
+export interface OverlapDetail {
+  muscle: MuscleGroup;
+  /** Fim da sessão mais recente em que o grupo foi primário. */
+  finishedAt: string;
+}
+
+/** Como `overlapWarning`, com o horário da sessão mais recente de cada grupo (para o texto). */
+export function overlapDetails({
   muscles,
   sessions,
   setLogs,
   exercises,
   now,
   windowHours = 24,
-}: OverlapInput): MuscleGroup[] {
+}: OverlapInput): OverlapDetail[] {
   const since = now.getTime() - windowHours * HOUR_MS;
   const recent = sessions.filter((s) => {
     if (s.status !== 'concluida' || !s.finishedAt) return false;
@@ -59,9 +70,16 @@ export function overlapWarning({
     return t >= since && t <= now.getTime();
   });
 
-  const worked = new Set<MuscleGroup>();
+  const worked = new Map<MuscleGroup, string>();
   for (const s of recent) {
-    for (const m of performedPrimaryMuscles(s.id, setLogs, exercises)) worked.add(m);
+    const finishedAt = s.finishedAt ?? s.startedAt;
+    for (const m of performedPrimaryMuscles(s.id, setLogs, exercises)) {
+      const prev = worked.get(m);
+      if (!prev || finishedAt > prev) worked.set(m, finishedAt);
+    }
   }
-  return muscles.filter((m) => worked.has(m));
+  return muscles.flatMap((muscle) => {
+    const finishedAt = worked.get(muscle);
+    return finishedAt ? [{ muscle, finishedAt }] : [];
+  });
 }

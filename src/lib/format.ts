@@ -43,3 +43,15 @@ const dateFormatter = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 
 export function formatShortDate(iso: string): string {
   return dateFormatter.format(new Date(iso));
 }
+
+/** 0 → "hoje", 1 → "ontem", n → "há n dias". */
+export function formatDaysAgo(days: number): string {
+  if (days <= 0) return 'hoje';
+  if (days === 1) return 'ontem';
+  return `há ${days} dias`;
+}
+
+/** plural(1, 'sessão', 'sessões') → "sessão" */
+export function plural(n: number, one: string, many: string): string {
+  return n === 1 ? one : many;
+}

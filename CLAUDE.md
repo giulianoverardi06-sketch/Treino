@@ -9,7 +9,8 @@
   - [x] Fase 0 — setup, layout com barra inferior, rotas vazias
   - [x] Fase 1 — dados (Dexie), tipos, seed, `domain/` com testes
   - [x] Fase 2 — sessão ativa (5.2 e 5.3); Início provisório com iniciar A/B/C e continuar
-  - [ ] Fase 3 — Início com próximo treino, sobreposição e continuar sessão
+  - [x] Fase 3 — Início com próximo treino, sobreposição e continuar sessão
+  - [ ] Fase 4 — Histórico (5.4) e edição de séries passadas
 
 ## Decisões que desviam ou completam o SPEC
 
@@ -30,6 +31,10 @@
 - Remover série renumera as seguintes (mantém 1..n contíguo para a métrica lateral).
 - Sessão descartada mantém as séries no banco, mas não conta em nada.
 - RPE (fácil/ok/difícil): um toque logo abaixo da última série confirmada.
+- Início: lembrete de backup só aparece quando já existe ao menos uma sessão concluída.
+- Com sessão em andamento, os botões de outros treinos somem (só uma sessão por vez).
+- "Últimos 7/30 dias" contam dias de calendário, com hoje incluído.
+- `useLiveQuery` devolve o `now` junto com os dados, para o render continuar puro (lint do React).
 
 ## Comandos
 

@@ -23,16 +23,14 @@ export function ProgramPage() {
               <li key={t.id}>
                 <Link
                   to={`/programa/${t.letter}`}
+                  aria-label={`Treino ${t.letter}: ${t.name}`}
                   className={`flex min-h-14 items-center gap-4 rounded-xl border-l-4 bg-surface px-4 py-3 ${style.border}`}
                 >
                   <span className={`text-3xl font-bold ${style.text}`} aria-hidden>
                     {t.letter}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate font-semibold">
-                      <span className="sr-only">Treino {t.letter}: </span>
-                      {t.name}
-                    </span>
+                    <span className="block truncate font-semibold">{t.name}</span>
                     <span className="block truncate text-sm text-muted">{t.emphasis}</span>
                     <span className="block text-xs text-muted num">
                       {`${t.slots.length} exercícios` +
