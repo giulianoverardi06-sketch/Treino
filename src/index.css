@@ -1,0 +1,90 @@
+@import 'tailwindcss';
+
+/*
+ * Tokens de cor. Tema escuro é o padrão (academia, brilho baixo).
+ * O tema claro é aplicado com <html data-theme="light"> (configurável na Fase 8).
+ */
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b0d10;
+  --surface: #15181d;
+  --surface-2: #1e2229;
+  --border: #2a2f38;
+  --text: #f2f4f7;
+  --text-muted: #9aa3b2;
+  --accent-a: #ff7a45; /* A — Peito, ombro e tríceps */
+  --accent-b: #3fa9ff; /* B — Costas e bíceps */
+  --accent-c: #4fd18b; /* C — Pernas e core */
+  --danger: #ff5c5c;
+  --focus: #ffd166;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #eceef2;
+  --border: #d5d9e0;
+  --text: #111418;
+  --text-muted: #555e6c;
+  --accent-a: #c4461a;
+  --accent-b: #1166b8;
+  --accent-c: #16804a;
+  --danger: #c42b2b;
+  --focus: #8a5a00;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-letter-a: var(--accent-a);
+  --color-letter-b: var(--accent-b);
+  --color-letter-c: var(--accent-c);
+  --color-danger: var(--danger);
+  --color-focus: var(--focus);
+  --default-transition-duration: 150ms;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    -webkit-tap-highlight-color: transparent;
+    font-family:
+      system-ui,
+      -apple-system,
+      'Segoe UI',
+      Roboto,
+      sans-serif;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0ms !important;
+      animation-duration: 0ms !important;
+    }
+  }
+}
+
+/* Números de carga/repetições: dígitos tabulares. */
+@utility num {
+  font-variant-numeric: tabular-nums;
+}
