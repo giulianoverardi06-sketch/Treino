@@ -405,3 +405,25 @@ Cada fase termina com o app rodando e os testes da fase passando. Ao fim de cada
 - Rotina de mobilidade e postura (checklist curto diário).
 - Comparação de fotos de evolução estética.
 - Exportação direta para planilha.
+
+---
+
+## 12. Extensões aprovadas depois do MVP
+
+### 12.1 Rotação de 2 a 5 treinos
+- O programa tem de 2 a 5 treinos, com letras consecutivas a partir de A (A, B, C, D, E).
+  Criar acrescenta a próxima letra (vazia, para montar); remover tira só a última letra, com
+  confirmação. Sessões antigas de uma letra removida continuam no histórico.
+- A sugestão segue a ordem das letras que existem: A→B→…→última→A. Se a última sessão concluída
+  for de uma letra que não existe mais, sugere a próxima letra existente depois dela (ou A).
+- Cada letra tem uma cor própria (paleta validada nos dois temas); D usa letra preta no quadrado.
+
+### 12.2 Cardio avulso
+- Registro separado da rotação: não muda a sugestão do próximo treino nem o aviso de sobreposição.
+- Campos: atividade (esteira, bicicleta, corrida, elíptico, escada, natação, caminhada, outro com
+  nome livre), data e hora, duração em minutos (obrigatória), distância em km (opcional),
+  intensidade leve/moderada/forte (opcional) e observação.
+- Aparece no Início (botão "Registrar cardio" e totais da semana), no Histórico (linhas próprias e
+  filtro "Cardio") e no Progresso (minutos e km em 7/30 dias). Velocidade média é calculada quando
+  há distância.
+- Entra no backup JSON (versão 3; backups das versões 1 e 2 continuam importáveis).

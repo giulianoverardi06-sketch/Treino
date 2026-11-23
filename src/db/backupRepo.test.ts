@@ -5,6 +5,7 @@ import { buildSeed } from '@/data/seedProgram';
 import { parseBackup } from '@/domain/backup';
 import { clearAllData, exportBackup, importBackup, markBackedUp } from './backupRepo';
 import { blobToBytes } from '@/lib/blob';
+import { saveCardio } from './cardioRepo';
 import { db } from './db';
 import { setExerciseImages } from './imageRepo';
 import { confirmSet, finishSession, startSession } from './sessionRepo';
@@ -38,6 +39,16 @@ async function populate() {
     new Blob([new Uint8Array([1, 2, 3, 250])], { type: 'image/jpeg' }),
     new Blob([new Uint8Array([9, 8])], { type: 'image/jpeg' }),
   ]);
+  await saveCardio({
+    activity: 'outro',
+    activityName: 'Remo',
+    date: '2026-03-01',
+    time: '18:30',
+    durationMin: '25',
+    distanceKm: '5,2',
+    intensity: 'forte',
+    notes: '',
+  });
   await markBackedUp(new Date('2026-03-01T00:00:00Z'));
 }
 
@@ -52,6 +63,7 @@ describe('backup', () => {
     expect(first.images).toHaveLength(2);
     expect(first.sessions).toHaveLength(1);
     expect(first.setLogs).toHaveLength(2);
+    expect(first.cardio).toMatchObject([{ activityName: 'Remo', distanceKm: 5.2 }]);
 
     // O arquivo passa por texto e pela validação, como no app.
     const parsed = parseBackup(JSON.stringify(first));
@@ -89,6 +101,7 @@ describe('backup', () => {
     expect(await db.sessions.count()).toBe(0);
     expect(await db.setLogs.count()).toBe(0);
     expect(await db.images.count()).toBe(0);
+    expect(await db.cardio.count()).toBe(0);
     expect(await db.exercises.count()).toBe(seed.exercises.length);
     expect((await db.templates.get('tpl-B'))?.name).toBe('Costas e bíceps');
     expect((await db.settings.get('singleton'))?.lastBackupAt).toBeUndefined();

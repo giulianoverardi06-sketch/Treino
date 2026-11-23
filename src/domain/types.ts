@@ -3,9 +3,16 @@
  * Datas são strings ISO 8601 em UTC (`toISOString()`), então comparam-se lexicograficamente.
  */
 
-export type Letter = 'A' | 'B' | 'C';
+/** Letras possíveis de treino (SPEC §12.1: rotação de 2 a 5). */
+export type Letter = 'A' | 'B' | 'C' | 'D' | 'E';
 
-export const LETTERS: readonly Letter[] = ['A', 'B', 'C'];
+export const LETTERS: readonly Letter[] = ['A', 'B', 'C', 'D', 'E'];
+
+/** Rotação do programa inicial; a real vem dos treinos que existem. */
+export const DEFAULT_ROTATION: readonly Letter[] = ['A', 'B', 'C'];
+
+export const MIN_WORKOUTS = 2;
+export const MAX_WORKOUTS = 5;
 
 export type MuscleGroup =
   | 'peito'
@@ -141,4 +148,25 @@ export interface StoredImage {
   id: string;
   blob: Blob;
   mime: string;
+}
+
+/* ---------- Cardio avulso (SPEC §12.2) ---------- */
+
+export type CardioActivity =
+  'esteira' | 'bicicleta' | 'corrida' | 'eliptico' | 'escada' | 'natacao' | 'caminhada' | 'outro';
+
+export type CardioIntensity = 'leve' | 'moderada' | 'forte';
+
+/** Sessão de cardio: fora da rotação, não muda a sugestão nem o aviso de sobreposição. */
+export interface CardioSession {
+  id: string;
+  activity: CardioActivity;
+  /** Nome livre quando `activity` é "outro". */
+  activityName?: string;
+  /** Início (ISO). */
+  startedAt: string;
+  durationMin: number;
+  distanceKm?: number;
+  intensity?: CardioIntensity;
+  notes?: string;
 }

@@ -94,7 +94,8 @@ describe('migração v2 (imagens do seed)', () => {
     expect((await db.exercises.get('elevacao-lateral-maquina'))?.imageSource).toEqual({
       kind: 'none',
     });
-    expect((await db.settings.get('singleton'))?.schemaVersion).toBe(2);
+    expect((await db.settings.get('singleton'))?.schemaVersion).toBe(3);
+    expect(await db.cardio.count()).toBe(0); // v3: tabela de cardio criada vazia
     // O populate não roda numa migração: nada foi duplicado.
     expect(await db.exercises.count()).toBe(seed.exercises.length);
   });

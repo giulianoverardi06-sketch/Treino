@@ -1,4 +1,4 @@
-import { buildSeed } from '@/data/seedProgram';
+import { buildSeed, SCHEMA_VERSION } from '@/data/seedProgram';
 import { BACKUP_VERSION, type Backup, type BackupImage } from '@/domain/backup';
 import type { Exercise } from '@/domain/types';
 import { blobToBytes } from '@/lib/blob';
@@ -32,16 +32,19 @@ export async function exportBackup(
 ): Promise<Backup> {
   return db.transaction(
     'r',
-    [db.exercises, db.templates, db.sessions, db.setLogs, db.settings, db.images],
+    [db.exercises, db.templates, db.sessions, db.setLogs, db.cardio, db.settings, db.images],
     async () => {
-      const [exercises, templates, sessions, setLogs, settings, images] = await Promise.all([
-        db.exercises.toArray(),
-        db.templates.toArray(),
-        db.sessions.toArray(),
-        db.setLogs.toArray(),
-        db.settings.get('singleton'),
-        options.includeImages ? db.images.toArray() : Promise.resolve([]),
-      ]);
+      const [exercises, templates, sessions, setLogs, cardio, settings, images] = await Promise.all(
+        [
+          db.exercises.toArray(),
+          db.templates.toArray(),
+          db.sessions.toArray(),
+          db.setLogs.toArray(),
+          db.cardio.toArray(),
+          db.settings.get('singleton'),
+          options.includeImages ? db.images.toArray() : Promise.resolve([]),
+        ],
+      );
       const encoded: BackupImage[] = [];
       for (const img of images) {
         encoded.push({ id: img.id, mime: img.mime, base64: await blobToBase64(img.blob) });
@@ -58,6 +61,7 @@ export async function exportBackup(
         templates,
         sessions,
         setLogs,
+        cardio,
         settings: settings ?? buildSeed(new Date().toISOString()).settings,
         images: encoded,
       };
@@ -70,6 +74,7 @@ const ALL_TABLES = () => [
   db.templates,
   db.sessions,
   db.setLogs,
+  db.cardio,
   db.settings,
   db.images,
 ];
@@ -87,8 +92,10 @@ export async function importBackup(backup: Backup): Promise<void> {
     await db.templates.bulkAdd(backup.templates);
     await db.sessions.bulkAdd(backup.sessions);
     await db.setLogs.bulkAdd(backup.setLogs);
+    await db.cardio.bulkAdd(backup.cardio);
     await db.images.bulkAdd(images);
-    await db.settings.put({ ...backup.settings, schemaVersion: BACKUP_VERSION });
+    // A versão do banco é a do app, não a do arquivo.
+    await db.settings.put({ ...backup.settings, schemaVersion: SCHEMA_VERSION });
   });
 }
 

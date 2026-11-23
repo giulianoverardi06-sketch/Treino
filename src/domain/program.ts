@@ -1,11 +1,14 @@
-import type {
-  Equipment,
-  Exercise,
-  Letter,
-  MuscleGroup,
-  Slot,
-  SlotProtocol,
-  WorkoutTemplate,
+import {
+  LETTERS,
+  MAX_WORKOUTS,
+  MIN_WORKOUTS,
+  type Equipment,
+  type Exercise,
+  type Letter,
+  type MuscleGroup,
+  type Slot,
+  type SlotProtocol,
+  type WorkoutTemplate,
 } from './types';
 
 /*
@@ -239,4 +242,34 @@ export function filterLibrary(
         e.primaryMuscles.some((m) => normalizeName(muscleLabels[m]).includes(q)),
     )
     .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+}
+
+/* ---------- Rotação (SPEC §12.1) ---------- */
+
+/** Letras que existem no programa, em ordem alfabética. */
+export function rotationOf(templates: readonly Pick<WorkoutTemplate, 'letter'>[]): Letter[] {
+  return LETTERS.filter((l) => templates.some((t) => t.letter === l));
+}
+
+/** Próxima letra a criar (a seguinte à última), ou `undefined` se já há o máximo. */
+export function nextTemplateLetter(
+  templates: readonly Pick<WorkoutTemplate, 'letter'>[],
+): Letter | undefined {
+  if (templates.length >= MAX_WORKOUTS) return undefined;
+  const rotation = rotationOf(templates);
+  const last = rotation[rotation.length - 1];
+  return last === undefined ? 'A' : LETTERS[LETTERS.indexOf(last) + 1];
+}
+
+/** Treino novo, vazio, com a letra indicada. */
+export function createTemplate(letter: Letter, id: string, now: string): WorkoutTemplate {
+  return { id, letter, name: `Treino ${letter}`, emphasis: '', slots: [], updatedAt: now };
+}
+
+/** Letra que pode ser removida (só a última, mantendo o mínimo), ou `undefined`. */
+export function removableTemplateLetter(
+  templates: readonly Pick<WorkoutTemplate, 'letter'>[],
+): Letter | undefined {
+  if (templates.length <= MIN_WORKOUTS) return undefined;
+  return rotationOf(templates).at(-1);
 }

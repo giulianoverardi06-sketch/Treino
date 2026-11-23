@@ -16,7 +16,7 @@ import { SEED_IMAGE_MAP } from './seedImageMap';
  * IDs são slugs estáveis: o mapeamento de imagens (Fase 7) e os testes dependem deles.
  */
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 interface SeedExercise {
   id: string;

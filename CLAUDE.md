@@ -19,6 +19,7 @@
   - [x] Fase 9 — Polimento: telas pesadas sob demanda (pacote principal 209 kB), Lighthouse
         mobile 98–100 em desempenho e 100 em acessibilidade/boas práticas, estados vazios, workflow de
         deploy no GitHub Pages.
+  - [x] Extensões (SPEC §12): rotação de 2 a 5 treinos (A–E) e cardio avulso.
 - Publicado em https://giulianoverardi06-sketch.github.io/Treino/ (repo
   github.com/giulianoverardi06-sketch/Treino). Cada push na `main` roda lint, testes, build e
   publica. O `git push` precisa do terminal interativo do usuário (login do Git Credential Manager).
@@ -86,6 +87,16 @@
 - Tema: `app/ThemeSync.tsx` aplica `settings.theme` no `<html>` e no `theme-color`.
 - Nunca reescrever arquivos com `Get-Content | Set-Content` no PowerShell 5.1: lê como ANSI e
   estraga os acentos. Usar as ferramentas de edição ou Python com `encoding='utf-8'`.
+- Rotação (§12.1): as letras vêm dos templates que existem (`rotationOf`); `nextWorkout` e
+  `homeSummary` recebem a rotação. Criar acrescenta a próxima letra com id novo (`newId`, não
+  `tpl-X`, para sessões antigas de uma letra removida não herdarem o nome do treino novo); remover
+  só a última, mínimo 2, e não com sessão em andamento daquele treino. D usa letra preta
+  (`LETTER_STYLES[l].onBg`). O filtro do Histórico inclui letras removidas que ainda têm sessões.
+- Cardio (§12.2): tabela `cardio` no banco v3; `domain/cardio.ts` (validação, totais, velocidade).
+  Duração em minutos inteiros. Histórico: `?tipo=cardio` filtra; linha com pictograma no lugar da
+  letra. Início mostra totais dos últimos 7 dias. Backup versão 3; versões 1–2 importam com cardio
+  vazio. Ao importar, `settings.schemaVersion` recebe a versão do banco (`SCHEMA_VERSION`), não a
+  do arquivo.
 - Erros de formulário ficam fora do `<label>` e ligados por `aria-describedby` (dentro do label
   mudariam o nome acessível do campo).
 
@@ -116,7 +127,7 @@ npm run format      # Prettier
 
 - Alias `@/` → `src/`.
 - Cores via tokens em `src/index.css` (`bg`, `surface`, `surface-2`, `border`, `edge`, `text`,
-  `muted`, `sign`, `on-sign`, `tile`, `on-tile`, `letter-a|b|c`, `focus`). Tema escuro é o padrão;
+  `muted`, `sign`, `on-sign`, `tile`, `on-tile`, `letter-a` a `letter-e`, `focus`). Tema escuro é o padrão;
   claro via `<html data-theme="light">`.
 - Utilitário `num` para dígitos tabulares; `flap` para a troca da placa (≤150ms).
 - Hash router (`createHashRouter`); a lista de rotas fica em `src/app/routes.tsx` e é reutilizada nos testes.

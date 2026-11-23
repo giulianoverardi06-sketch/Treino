@@ -24,6 +24,8 @@
   --accent-a: #d0342c;
   --accent-b: #3a8ff0;
   --accent-c: #16a8a0;
+  --accent-d: #c98500; /* letra preta no quadrado */
+  --accent-e: #b56be8;
   --focus: #ffcc00;
 }
 
@@ -44,6 +46,8 @@
   --accent-a: #b42318;
   --accent-b: #175cd3;
   --accent-c: #008a72;
+  --accent-d: #a07800;
+  --accent-e: #8a3fd1;
   --focus: #0b0b0b;
 }
 
@@ -64,6 +68,8 @@
   --color-letter-a: var(--accent-a);
   --color-letter-b: var(--accent-b);
   --color-letter-c: var(--accent-c);
+  --color-letter-d: var(--accent-d);
+  --color-letter-e: var(--accent-e);
   --color-focus: var(--focus);
   --default-transition-duration: 150ms;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);

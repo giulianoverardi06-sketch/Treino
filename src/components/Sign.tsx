@@ -39,7 +39,7 @@ export function Tile({
   );
 }
 
-/** Quadrado de saguão: a letra do treino em branco sobre a cor do treino. */
+/** Quadrado de saguão: a letra do treino sobre a cor do treino. */
 export function LetterTile({
   letter,
   size = 'md',
@@ -52,7 +52,7 @@ export function LetterTile({
   return (
     <span
       aria-hidden
-      className={`flex shrink-0 items-center justify-center rounded-[3px] font-bold text-white ${LETTER_STYLES[letter].bg} ${TILE_SIZE[size]} ${className}`}
+      className={`flex shrink-0 items-center justify-center rounded-[3px] font-bold ${LETTER_STYLES[letter].onBg} ${LETTER_STYLES[letter].bg} ${TILE_SIZE[size]} ${className}`}
     >
       {letter}
     </span>

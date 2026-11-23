@@ -1,7 +1,8 @@
 # Treino ABC
 
-App pessoal (PWA) para registrar treinos de musculação na divisão ABC contínua: o próximo treino
-vem da sequência real, cada série é registrada em segundos e a progressão aparece por exercício.
+App pessoal (PWA) para registrar treinos de musculação em rotação contínua (2 a 5 treinos, A a E):
+o próximo treino vem da sequência real, cada série é registrada em segundos e a progressão aparece
+por exercício. Cardio avulso (tempo, distância, intensidade) fica ao lado, fora da rotação.
 Tudo fica no aparelho, com backup em JSON.
 
 - Especificação: [docs/SPEC.md](docs/SPEC.md)

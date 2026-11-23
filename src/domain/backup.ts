@@ -1,14 +1,15 @@
 import { z } from 'zod';
-import type { Exercise, Session, SetLog, Settings, WorkoutTemplate } from './types';
+import type { CardioSession, Exercise, Session, SetLog, Settings, WorkoutTemplate } from './types';
 
 /*
  * Backup versionado (SPEC §5.8): JSON com todas as tabelas e as imagens em base64.
  * A validação usa zod; importar substitui tudo.
  */
 
-export const BACKUP_VERSION = 2;
+/** 3: cardio (SPEC §12.2). Backups 1 e 2 continuam importáveis (sem cardio). */
+export const BACKUP_VERSION = 3;
 
-const letter = z.enum(['A', 'B', 'C']);
+const letter = z.enum(['A', 'B', 'C', 'D', 'E']);
 const muscle = z.enum([
   'peito',
   'peito_superior',
@@ -121,6 +122,26 @@ const settings = z.object({
   schemaVersion: z.number().int(),
 });
 
+const cardio = z.object({
+  id: z.string().min(1),
+  activity: z.enum([
+    'esteira',
+    'bicicleta',
+    'corrida',
+    'eliptico',
+    'escada',
+    'natacao',
+    'caminhada',
+    'outro',
+  ]),
+  activityName: z.string().optional(),
+  startedAt: iso,
+  durationMin: z.number().positive(),
+  distanceKm: z.number().positive().optional(),
+  intensity: z.enum(['leve', 'moderada', 'forte']).optional(),
+  notes: z.string().optional(),
+});
+
 const backupImage = z.object({
   id: z.string().min(1),
   mime: z.string().min(1),
@@ -134,6 +155,7 @@ export const backupSchema = z.object({
   templates: z.array(template),
   sessions: z.array(session),
   setLogs: z.array(setLog),
+  cardio: z.array(cardio).default([]),
   settings,
   images: z.array(backupImage),
 });
@@ -151,6 +173,7 @@ export interface Backup {
   templates: WorkoutTemplate[];
   sessions: Session[];
   setLogs: SetLog[];
+  cardio: CardioSession[];
   settings: Settings;
   images: BackupImage[];
 }
@@ -182,6 +205,7 @@ export interface BackupSummary {
   sessions: number;
   setLogs: number;
   exercises: number;
+  cardio: number;
   images: number;
 }
 
@@ -191,6 +215,7 @@ export function summarizeBackup(b: Backup): BackupSummary {
     sessions: b.sessions.filter((s) => s.status === 'concluida').length,
     setLogs: b.setLogs.length,
     exercises: b.exercises.length,
+    cardio: b.cardio.length,
     images: b.images.length,
   };
 }

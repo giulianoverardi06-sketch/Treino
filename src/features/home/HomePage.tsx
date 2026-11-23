@@ -1,4 +1,4 @@
-import { ChevronRight, HardDriveDownload, Settings, TriangleAlert } from 'lucide-react';
+import { ChevronRight, HardDriveDownload, HeartPulse, Settings, TriangleAlert } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Button } from '@/components/Button';
@@ -6,12 +6,21 @@ import { buttonClass } from '@/components/buttonStyles';
 import { PageHeader } from '@/components/PageHeader';
 import { ArrowLead, LetterTile, Tile } from '@/components/Sign';
 import { startSession } from '@/db/sessionRepo';
+import { cardioTotals } from '@/domain/cardio';
 import { homeSummary, needsBackupReminder } from '@/domain/homeSummary';
 import { daysSinceLetter, nextWorkout } from '@/domain/nextWorkout';
 import { overlapDetails, templatePrimaryMuscles } from '@/domain/overlap';
-import { LETTERS, type Letter, type Session } from '@/domain/types';
+import { rotationOf } from '@/domain/program';
+import type { Letter, Session } from '@/domain/types';
 import { calendarDaysBetween } from '@/lib/dates';
-import { formatDaysAgo, formatShortDate, formatTime, plural } from '@/lib/format';
+import {
+  formatDaysAgo,
+  formatDuration,
+  formatNumber,
+  formatShortDate,
+  formatTime,
+  plural,
+} from '@/lib/format';
 import { overlapText } from './overlapText';
 import { useHomeData, type HomeData } from './useHomeData';
 
@@ -48,10 +57,11 @@ export function HomePage() {
 }
 
 function HomeContent({ data, onStart }: { data: HomeData; onStart: (letter: Letter) => void }) {
-  const next = nextWorkout(data.sessions);
-  const summary = homeSummary(data.sessions, data.now);
+  const rotation = rotationOf(data.templates);
+  const next = nextWorkout(data.sessions, rotation);
+  const summary = homeSummary(data.sessions, data.now, rotation);
   const showBackup = needsBackupReminder(data.settings, data.sessions, data.now);
-  const hasHistory = LETTERS.some((l) => summary.lastByLetter[l]);
+  const hasHistory = rotation.some((l) => summary.lastByLetter[l]);
 
   return (
     <div className="flex flex-col">
@@ -65,30 +75,34 @@ function HomeContent({ data, onStart }: { data: HomeData; onStart: (letter: Lett
               Outros treinos
             </h2>
             <ul className="flex flex-col gap-2">
-              {LETTERS.filter((l) => l !== next.letter).map((letter) => {
-                const t = data.templates.find((x) => x.letter === letter);
-                return (
-                  <li key={letter}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onStart(letter);
-                      }}
-                      className="flex min-h-16 w-full items-center gap-3 rounded-[4px] border-2 border-edge bg-surface px-3 text-left hover:bg-surface-2"
-                    >
-                      <LetterTile letter={letter} />
-                      <span className="min-w-0 flex-1 text-lg leading-tight font-bold">
-                        {t?.name ?? `Treino ${letter}`}
-                      </span>
-                      <ChevronRight aria-hidden size={22} strokeWidth={2.5} />
-                    </button>
-                  </li>
-                );
-              })}
+              {rotation
+                .filter((l) => l !== next.letter)
+                .map((letter) => {
+                  const t = data.templates.find((x) => x.letter === letter);
+                  return (
+                    <li key={letter}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onStart(letter);
+                        }}
+                        className="flex min-h-16 w-full items-center gap-3 rounded-[4px] border-2 border-edge bg-surface px-3 text-left hover:bg-surface-2"
+                      >
+                        <LetterTile letter={letter} />
+                        <span className="min-w-0 flex-1 text-lg leading-tight font-bold">
+                          {t?.name ?? `Treino ${letter}`}
+                        </span>
+                        <ChevronRight aria-hidden size={22} strokeWidth={2.5} />
+                      </button>
+                    </li>
+                  );
+                })}
             </ul>
           </section>
         </>
       )}
+
+      <CardioLink data={data} />
 
       <section aria-labelledby="summary-title" className="mt-8">
         <h2 id="summary-title" className="mb-2 text-lg font-extrabold">
@@ -98,7 +112,7 @@ function HomeContent({ data, onStart }: { data: HomeData; onStart: (letter: Lett
           {hasHistory ? (
             <>
               <dl>
-                {LETTERS.map((letter) => {
+                {rotation.map((letter) => {
                   const last = summary.lastByLetter[letter];
                   return (
                     <div
@@ -273,5 +287,29 @@ function ContinueSign({ data, session }: { data: HomeData; session: Session }) {
         <span>Continuar sessão</span>
       </Link>
     </SignPanel>
+  );
+}
+
+/** Cardio avulso: fora da rotação, com os totais dos últimos 7 dias (SPEC §12.2). */
+function CardioLink({ data }: { data: HomeData }) {
+  const week = cardioTotals(data.recentCardio, data.now, 7);
+  const detail =
+    week.count === 0
+      ? 'Nenhum nos últimos 7 dias'
+      : `Últimos 7 dias: ${formatDuration(week.minutes)}` +
+        (week.km > 0 ? ` · ${formatNumber(week.km)} km` : '') +
+        ` · ${week.count} ${plural(week.count, 'sessão', 'sessões')}`;
+  return (
+    <Link
+      to="/cardio/novo"
+      className="mt-8 flex min-h-16 items-center gap-3 rounded-[4px] border-2 border-edge bg-surface px-3 py-2 hover:bg-surface-2"
+    >
+      <Tile icon={HeartPulse} />
+      <span className="min-w-0 flex-1">
+        <span className="block text-lg leading-tight font-bold">Registrar cardio</span>
+        <span className="block text-sm text-muted num">{detail}</span>
+      </span>
+      <ChevronRight aria-hidden size={22} strokeWidth={2.5} />
+    </Link>
   );
 }

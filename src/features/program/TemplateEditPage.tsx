@@ -16,17 +16,18 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ChevronDown, ChevronUp, GripVertical, Plus } from 'lucide-react';
+import { ChevronDown, ChevronUp, GripVertical, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
+import { Button } from '@/components/Button';
 import { ExercisePicker } from '@/components/ExercisePicker';
 import { Modal } from '@/components/Modal';
 import { PageHeader } from '@/components/PageHeader';
 import { LetterTile, Tile } from '@/components/Sign';
 import { useToast } from '@/components/Toast';
 import { db } from '@/db/db';
-import { saveSlots, updateTemplate } from '@/db/programRepo';
-import { applySlotDraft, createSlot, moveSlot } from '@/domain/program';
+import { ProgramError, removeLastTemplate, saveSlots, updateTemplate } from '@/db/programRepo';
+import { applySlotDraft, createSlot, moveSlot, removableTemplateLetter } from '@/domain/program';
 import { LETTERS, type Exercise, type Slot, type WorkoutTemplate } from '@/domain/types';
 import { newId } from '@/lib/ids';
 import { plural } from '@/lib/format';
@@ -37,12 +38,17 @@ export function TemplateEditPage() {
   const letter = LETTERS.find((l) => l === param.toUpperCase());
   const data = useLiveQuery(async () => {
     if (!letter) return null;
-    const [template, exercises] = await Promise.all([
-      db.templates.where('letter').equals(letter).first(),
+    const [templates, exercises] = await Promise.all([
+      db.templates.toArray(),
       db.exercises.toArray(),
     ]);
+    const template = templates.find((t) => t.letter === letter);
     if (!template) return null;
-    return { template, exercises: new Map(exercises.map((e) => [e.id, e])) };
+    return {
+      template,
+      exercises: new Map(exercises.map((e) => [e.id, e])),
+      removable: removableTemplateLetter(templates) === letter,
+    };
   }, [letter]);
 
   if (data === undefined) return <p className="text-base text-muted">Carregando…</p>;
@@ -54,7 +60,13 @@ export function TemplateEditPage() {
       </>
     );
   }
-  return <TemplateEditor template={data.template} exercises={data.exercises} />;
+  return (
+    <TemplateEditor
+      template={data.template}
+      exercises={data.exercises}
+      removable={data.removable}
+    />
+  );
 }
 
 const inputCls =
@@ -63,13 +75,18 @@ const inputCls =
 function TemplateEditor({
   template,
   exercises,
+  removable,
 }: {
   template: WorkoutTemplate;
   exercises: ReadonlyMap<string, Exercise>;
+  /** É a última letra e o programa tem mais que o mínimo de treinos. */
+  removable: boolean;
 }) {
   const toast = useToast();
+  const navigate = useNavigate();
   const [editing, setEditing] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
   const slots = template.slots;
   const editingSlot = slots.find((s) => s.id === editing);
 
@@ -103,6 +120,18 @@ function TemplateEditor({
       actionLabel: 'Desfazer',
       onAction: () => void saveSlots(template.id, before),
     });
+  }
+
+  async function removeTemplate() {
+    setConfirmRemove(false);
+    try {
+      await removeLastTemplate();
+      toast({ message: `Treino ${template.letter} removido` });
+      void navigate('/programa', { replace: true });
+    } catch (e) {
+      if (!(e instanceof ProgramError)) throw e;
+      toast({ message: e.message });
+    }
   }
 
   return (
@@ -190,6 +219,58 @@ function TemplateEditor({
           <Plus aria-hidden size={22} strokeWidth={2.5} /> Exercício
         </button>
       </section>
+
+      {removable && (
+        <section aria-labelledby="remove-title" className="mt-10 border-t border-border pt-4">
+          <h2 id="remove-title" className="sr-only">
+            Remover treino
+          </h2>
+          <Button
+            variant="outline"
+            icon={Trash2}
+            className="w-full"
+            onClick={() => {
+              setConfirmRemove(true);
+            }}
+          >
+            Remover treino {template.letter}
+          </Button>
+          <p className="mt-2 text-sm text-muted">
+            A rotação volta a ter um treino a menos. As sessões já feitas continuam no histórico.
+          </p>
+        </section>
+      )}
+
+      {confirmRemove && (
+        <Modal
+          title={`Remover treino ${template.letter}?`}
+          onClose={() => {
+            setConfirmRemove(false);
+          }}
+          footer={
+            <>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setConfirmRemove(false);
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button variant="solid" className="flex-1" onClick={() => void removeTemplate()}>
+                Remover
+              </Button>
+            </>
+          }
+        >
+          <p className="text-base text-muted">
+            “{template.name}” e seus {slots.length}{' '}
+            {plural(slots.length, 'exercício', 'exercícios')} saem do programa. As sessões já feitas
+            continuam no histórico e na progressão.
+          </p>
+        </Modal>
+      )}
 
       {adding && (
         <Modal

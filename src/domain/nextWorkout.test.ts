@@ -82,3 +82,30 @@ describe('última sessão por letra', () => {
     expect(daysSinceLetter(sessions, 'C', now)).toBeUndefined();
   });
 });
+
+describe('rotação de 2 a 5 treinos (SPEC §12.1)', () => {
+  const ABCDE = ['A', 'B', 'C', 'D', 'E'] as const;
+
+  it('com cinco treinos, C → D e E → A', () => {
+    expect(nextWorkout([makeSession('C', at('2026-03-01'))], ABCDE)).toMatchObject({
+      letter: 'D',
+    });
+    expect(nextWorkout([makeSession('E', at('2026-03-01'))], ABCDE)).toMatchObject({
+      letter: 'A',
+    });
+  });
+
+  it('com dois treinos, A ↔ B', () => {
+    expect(nextLetter('A', ['A', 'B'])).toBe('B');
+    expect(nextLetter('B', ['A', 'B'])).toBe('A');
+  });
+
+  it('letra removida: segue para a próxima que existe depois dela, ou volta ao A', () => {
+    expect(nextLetter('D', ['A', 'B', 'C'])).toBe('A');
+    expect(nextLetter('C', ['A', 'B'])).toBe('A');
+  });
+
+  it('sem histórico sugere a primeira letra da rotação', () => {
+    expect(nextWorkout([], ['A', 'B'])).toEqual({ kind: 'suggest', letter: 'A' });
+  });
+});

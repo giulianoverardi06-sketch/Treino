@@ -1,7 +1,14 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { DEFAULT_SETTINGS } from '@/data/seedProgram';
 import { db } from '@/db/db';
-import type { Exercise, Session, SetLog, Settings, WorkoutTemplate } from '@/domain/types';
+import type {
+  CardioSession,
+  Exercise,
+  Session,
+  SetLog,
+  Settings,
+  WorkoutTemplate,
+} from '@/domain/types';
 import { HOUR_MS } from '@/lib/dates';
 
 export interface HomeData {
@@ -15,16 +22,22 @@ export interface HomeData {
   recentLogs: SetLog[];
   /** Séries já registradas na sessão em andamento. */
   currentSetCount: number;
+  /** Cardio dos últimos 8 dias (totais da semana). */
+  recentCardio: CardioSession[];
 }
 
 export function useHomeData(): HomeData | undefined {
   return useLiveQuery(async () => {
     const now = new Date();
-    const [sessions, templates, settings, exercises] = await Promise.all([
+    const [sessions, templates, settings, exercises, recentCardio] = await Promise.all([
       db.sessions.toArray(),
       db.templates.orderBy('letter').toArray(),
       db.settings.get('singleton'),
       db.exercises.toArray(),
+      db.cardio
+        .where('startedAt')
+        .aboveOrEqual(new Date(now.getTime() - 8 * 24 * HOUR_MS).toISOString())
+        .toArray(),
     ]);
     const since = now.getTime() - 24 * HOUR_MS;
     const recentIds = sessions
@@ -43,6 +56,7 @@ export function useHomeData(): HomeData | undefined {
       exercises: new Map(exercises.map((e) => [e.id, e])),
       recentLogs,
       currentSetCount,
+      recentCardio,
     };
   });
 }

@@ -1,16 +1,17 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ChartLine, ChevronRight } from 'lucide-react';
+import { ChartLine, ChevronRight, HeartPulse } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { PageHeader } from '@/components/PageHeader';
 import { Segmented } from '@/components/PeriodFilter';
 import { Tile } from '@/components/Sign';
 import { db } from '@/db/db';
+import { cardioTotals } from '@/domain/cardio';
 import { MUSCLE_LABELS } from '@/domain/labels';
 import { exerciseHistory } from '@/domain/exerciseHistory';
 import { pushPullBalance, setsByMuscle } from '@/domain/progress';
 import type { MuscleGroup } from '@/domain/types';
-import { describeSets, formatNumber, formatShortDate, plural } from '@/lib/format';
+import { describeSets, formatDuration, formatNumber, formatShortDate, plural } from '@/lib/format';
 
 const WINDOWS = [
   { value: '7', label: '7 dias' },
@@ -21,14 +22,16 @@ type Window = (typeof WINDOWS)[number]['value'];
 export function ProgressPage() {
   const [windowDays, setWindowDays] = useState<Window>('7');
   const data = useLiveQuery(async () => {
-    const [sessions, setLogs, exercises] = await Promise.all([
+    const [sessions, setLogs, exercises, cardio] = await Promise.all([
       db.sessions.where('status').equals('concluida').toArray(),
       db.setLogs.toArray(),
       db.exercises.toArray(),
+      db.cardio.toArray(),
     ]);
     return {
       now: new Date(),
       sessions,
+      cardio,
       setLogs,
       exercises: new Map(exercises.map((e) => [e.id, e])),
     };
@@ -53,6 +56,7 @@ export function ProgressPage() {
   const rows = [...counts.entries()].sort((a, b) => b[1] - a[1]);
   const max = Math.max(1, ...rows.map(([, n]) => n));
   const balance = pushPullBalance(counts);
+  const cardio = cardioTotals(data.cardio, data.now, Number(windowDays));
 
   // Exercícios com histórico, do feito mais recentemente para o mais antigo.
   const doneIds = [...new Set(data.setLogs.map((l) => l.exerciseId))];
@@ -67,7 +71,7 @@ export function ProgressPage() {
   return (
     <>
       <PageHeader title="Progresso" />
-      {data.sessions.length === 0 ? (
+      {data.sessions.length === 0 && data.cardio.length === 0 ? (
         <div className="flex items-start gap-3 border-y border-border py-4 text-base">
           <Tile icon={ChartLine} />
           <div className="pt-1">
@@ -137,7 +141,38 @@ export function ProgressPage() {
             </div>
           </section>
 
-          <section aria-labelledby="exercises-title">
+          <section aria-labelledby="cardio-title">
+            <h2 id="cardio-title" className="mb-3 text-lg font-bold">
+              Cardio
+            </h2>
+            <div className="flex items-center gap-4 rounded-[4px] border-2 border-edge bg-surface px-3 py-3">
+              <Tile icon={HeartPulse} />
+              {cardio.count === 0 ? (
+                <p className="text-base text-muted">Nenhum cardio no período.</p>
+              ) : (
+                <dl className="grid flex-1 grid-cols-3 divide-x divide-border num">
+                  <div className="pr-3">
+                    <dt className="text-sm text-muted">Tempo</dt>
+                    <dd className="text-xl leading-tight font-bold">
+                      {formatDuration(cardio.minutes)}
+                    </dd>
+                  </div>
+                  <div className="px-3">
+                    <dt className="text-sm text-muted">Distância</dt>
+                    <dd className="text-xl leading-tight font-bold">
+                      {cardio.km > 0 ? `${formatNumber(cardio.km)} km` : '—'}
+                    </dd>
+                  </div>
+                  <div className="pl-3">
+                    <dt className="text-sm text-muted">Sessões</dt>
+                    <dd className="text-xl leading-tight font-bold">{cardio.count}</dd>
+                  </div>
+                </dl>
+              )}
+            </div>
+          </section>
+
+          <section aria-labelledby="exercises-title" hidden={exercises.length === 0}>
             <h2 id="exercises-title" className="mb-1 text-lg font-bold">
               Exercícios
             </h2>

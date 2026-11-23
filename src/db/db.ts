@@ -1,6 +1,7 @@
 import Dexie, { type EntityTable, type Transaction } from 'dexie';
 import { buildSeed, seedImageSource } from '@/data/seedProgram';
 import type {
+  CardioSession,
   Exercise,
   Session,
   SetLog,
@@ -47,6 +48,13 @@ function registerVersions(db: Dexie) {
         });
       await tx.table<Settings, string>('settings').update('singleton', { schemaVersion: 2 });
     });
+
+  // v3 (SPEC §12.2): sessões de cardio avulsas, fora da rotação.
+  db.version(3)
+    .stores({ cardio: 'id, startedAt' })
+    .upgrade(async (tx) => {
+      await tx.table<Settings, string>('settings').update('singleton', { schemaVersion: 3 });
+    });
 }
 
 /** Seed na criação do banco. O evento `populate` só dispara uma vez, dentro da transação de criação. */
@@ -64,6 +72,7 @@ export class TreinoDB extends Dexie {
   declare setLogs: EntityTable<SetLog, 'id'>;
   declare images: EntityTable<StoredImage, 'id'>;
   declare settings: EntityTable<Settings, 'id'>;
+  declare cardio: EntityTable<CardioSession, 'id'>;
 
   constructor(name: string = DB_NAME) {
     super(name);

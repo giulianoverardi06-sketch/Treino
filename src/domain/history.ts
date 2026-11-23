@@ -1,4 +1,4 @@
-import type { Letter, Session, SetLog } from './types';
+import type { CardioSession, Letter, Session, SetLog } from './types';
 
 export interface HistoryItem {
   session: Session;
@@ -65,4 +65,20 @@ export function groupByMonth<T>(items: readonly T[], dateOf: (item: T) => string
     else groups.push({ key, items: [item] });
   }
   return groups;
+}
+
+/** Linha do histórico: treino da rotação ou cardio avulso (SPEC §12.2). */
+export type TimelineItem =
+  | { kind: 'treino'; at: string; item: HistoryItem }
+  | { kind: 'cardio'; at: string; cardio: CardioSession };
+
+/** Junta treinos e cardio, do mais recente para o mais antigo. */
+export function mergeTimeline(
+  items: readonly HistoryItem[],
+  cardio: readonly CardioSession[],
+): TimelineItem[] {
+  return [
+    ...items.map((item) => ({ kind: 'treino' as const, at: item.session.startedAt, item })),
+    ...cardio.map((c) => ({ kind: 'cardio' as const, at: c.startedAt, cardio: c })),
+  ].sort((a, b) => b.at.localeCompare(a.at));
 }

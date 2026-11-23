@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -142,5 +142,41 @@ describe('Biblioteca', () => {
       expect((await db.exercises.get('leg-press-45'))?.archived).toBe(true);
     });
     expect(await screen.findByRole('button', { name: 'Desarquivar' })).toBeInTheDocument();
+  });
+});
+
+describe('Rotação: criar e remover treino', () => {
+  it('cria o treino D vazio e abre a edição', async () => {
+    const router = renderAt('/programa');
+    await userEvent.click(await screen.findByRole('button', { name: 'Treino D' }));
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe('/programa/D');
+    });
+    expect(await screen.findByText(/Nenhum exercício neste treino/)).toBeInTheDocument();
+    const letters = (await db.templates.toArray()).map((t) => t.letter).sort();
+    expect(letters).toEqual(['A', 'B', 'C', 'D']);
+  });
+
+  it('remove só o último treino, com confirmação', async () => {
+    renderAt('/programa/b');
+    await screen.findByLabelText('Nome');
+    expect(screen.queryByRole('button', { name: /Remover treino/ })).not.toBeInTheDocument();
+    cleanup();
+
+    const router = renderAt('/programa/c');
+    await userEvent.click(await screen.findByRole('button', { name: 'Remover treino C' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Remover treino C?' });
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Remover' }));
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe('/programa');
+    });
+    expect((await db.templates.toArray()).map((t) => t.letter).sort()).toEqual(['A', 'B']);
+  });
+
+  it('não deixa ficar com menos de 2 treinos', async () => {
+    await db.templates.delete('tpl-C');
+    renderAt('/programa/b');
+    await screen.findByLabelText('Nome');
+    expect(screen.queryByRole('button', { name: /Remover treino/ })).not.toBeInTheDocument();
   });
 });

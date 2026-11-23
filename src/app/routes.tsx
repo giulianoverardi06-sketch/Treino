@@ -64,6 +64,18 @@ export const routes: RouteObject[] = [
         }),
       },
       {
+        path: 'cardio/novo',
+        lazy: async () => ({
+          Component: (await import('@/features/cardio/CardioEditPage')).CardioEditPage,
+        }),
+      },
+      {
+        path: 'cardio/:id',
+        lazy: async () => ({
+          Component: (await import('@/features/cardio/CardioEditPage')).CardioEditPage,
+        }),
+      },
+      {
         path: 'config',
         lazy: async () => ({
           Component: (await import('@/features/settings/SettingsPage')).SettingsPage,

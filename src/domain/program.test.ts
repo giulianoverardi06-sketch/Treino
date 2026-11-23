@@ -1,15 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import { seed } from '@/test/factories';
 import { MUSCLE_LABELS } from './labels';
+import type { Letter } from './types';
 import {
   applyExerciseDraft,
   applySlotDraft,
   createSlot,
+  createTemplate,
   deletionPolicy,
   exerciseUsage,
   filterLibrary,
   moveSlot,
+  nextTemplateLetter,
   promoteAlternative,
+  removableTemplateLetter,
+  rotationOf,
   slotToDraft,
   validateExercise,
   validateSlot,
@@ -162,5 +167,36 @@ describe('biblioteca', () => {
     expect(
       filterLibrary(exercises, { query: 'antigo', showArchived: true }, MUSCLE_LABELS),
     ).toHaveLength(1);
+  });
+});
+
+describe('rotação do programa (SPEC §12.1)', () => {
+  const of = (...letters: Letter[]) => letters.map((letter) => ({ letter }));
+
+  it('rotationOf ordena e ignora repetidas', () => {
+    expect(rotationOf(of('C', 'A', 'B', 'A'))).toEqual(['A', 'B', 'C']);
+  });
+
+  it('cria a letra seguinte à última, até E', () => {
+    expect(nextTemplateLetter(of('A', 'B', 'C'))).toBe('D');
+    expect(nextTemplateLetter(of('A', 'B', 'C', 'D'))).toBe('E');
+    expect(nextTemplateLetter(of('A', 'B', 'C', 'D', 'E'))).toBeUndefined();
+  });
+
+  it('remove só a última letra e nunca abaixo de 2 treinos', () => {
+    expect(removableTemplateLetter(of('A', 'B', 'C', 'D'))).toBe('D');
+    expect(removableTemplateLetter(of('A', 'B', 'C'))).toBe('C');
+    expect(removableTemplateLetter(of('A', 'B'))).toBeUndefined();
+  });
+
+  it('treino novo vem vazio com nome padrão', () => {
+    expect(createTemplate('D', 'x', '2026-03-01T10:00:00.000Z')).toEqual({
+      id: 'x',
+      letter: 'D',
+      name: 'Treino D',
+      emphasis: '',
+      slots: [],
+      updatedAt: '2026-03-01T10:00:00.000Z',
+    });
   });
 });

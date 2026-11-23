@@ -22,6 +22,16 @@ function sample(): Backup {
       ...makeSets(done, 'peck-deck', [[42.5, 10], [40]]),
       ...makeSets(discarded, 'pulley-frente', [[50]]),
     ],
+    cardio: [
+      {
+        id: 'c1',
+        activity: 'esteira',
+        startedAt: '2026-03-02T21:00:00.000Z',
+        durationMin: 30,
+        distanceKm: 4.5,
+        intensity: 'moderada',
+      },
+    ],
     settings: { ...seed.settings, lastBackupAt: '2026-02-01T00:00:00.000Z' },
     images: [{ id: 'img', mime: 'image/jpeg', base64: 'AAEC' }],
   };
@@ -54,6 +64,24 @@ describe('parseBackup', () => {
   });
 });
 
+describe('versões antigas', () => {
+  it('backup da versão 2 (sem cardio) continua importável, com cardio vazio', () => {
+    const old: Partial<Backup> = { ...sample(), schemaVersion: 2 };
+    delete old.cardio;
+    const result = parseBackup(JSON.stringify(old));
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.backup.cardio).toEqual([]);
+  });
+
+  it('aceita letras D e E', () => {
+    const b = sample();
+    const [first] = b.templates;
+    if (!first) throw new Error('seed');
+    b.templates = [...b.templates, { ...first, id: 'tpl-x', letter: 'E' }];
+    expect(parseBackup(JSON.stringify(b)).ok).toBe(true);
+  });
+});
+
 describe('resumo, nome e CSV', () => {
   it('resumo conta sessões concluídas, séries, exercícios e imagens', () => {
     expect(summarizeBackup(sample())).toEqual({
@@ -61,6 +89,7 @@ describe('resumo, nome e CSV', () => {
       sessions: 1,
       setLogs: 3,
       exercises: 39,
+      cardio: 1,
       images: 1,
     });
   });

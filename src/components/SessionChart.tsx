@@ -40,6 +40,8 @@ const FILL: Record<Letter, string> = {
   A: 'fill-letter-a',
   B: 'fill-letter-b',
   C: 'fill-letter-c',
+  D: 'fill-letter-d',
+  E: 'fill-letter-e',
 };
 
 /*
