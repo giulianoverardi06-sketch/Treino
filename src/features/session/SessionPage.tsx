@@ -131,12 +131,20 @@ function ActiveSession({ data }: { data: SessionData }) {
                 {exercises.get(current.exerciseId)?.name ?? current.label}
               </span>
             </>
+          ) : entries.length === 0 ? (
+            'Treino sem exercícios. Adicione abaixo.'
           ) : (
             'Tudo registrado. Finalize o treino.'
           )}
         </p>
       </header>
 
+      {entries.length === 0 && (
+        <p className="border-y border-border py-4 text-base text-muted">
+          Este treino está sem exercícios. Use “+ Exercício” para registrar o que fizer hoje, ou
+          monte o treino em Programa.
+        </p>
+      )}
       <ol className="flex flex-col" aria-label="Exercícios">
         {entries.map((entry, i) => (
           <EntryCard

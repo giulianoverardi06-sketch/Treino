@@ -15,8 +15,10 @@
   - [x] Fase 6 — Programa e biblioteca (5.6 e 5.7), sem imagens
   - [x] Fase 7 — Imagens (free-exercise-db, upload)
   - [x] Fase 8 — PWA, backup JSON/CSV, configurações, wake lock (registro do service worker
-    ainda não testado num celular/Chrome real: o navegador embutido não registra service workers)
-  - [ ] Fase 9 — Polimento: estados vazios, acessibilidade, Lighthouse, deploy
+        ainda não testado num celular/Chrome real: o navegador embutido não registra service workers)
+  - [x] Fase 9 — Polimento: telas pesadas sob demanda (pacote principal 209 kB), Lighthouse
+        mobile 98–100 em desempenho e 100 em acessibilidade/boas práticas, estados vazios, workflow de
+        deploy no GitHub Pages pronto. Falta publicar (precisa de um repositório no GitHub do usuário).
 
 ## Decisões que desviam ou completam o SPEC
 
@@ -55,7 +57,11 @@
   primeira de uma janela de até 5 sessões.
 - Métrica lateral só usa sessões em que a entrada do exercício estava no protocolo `drop_lateral`.
 - Equilíbrio empurrar/puxar: peito superior conta como peito.
-- Bundle passou de 500 kB por causa do Recharts; dividir as rotas de gráfico na Fase 9.
+- Rotas de progresso, programa, biblioteca e configurações usam `lazy` do React Router (Recharts,
+  dnd-kit e zod fora do pacote principal). Testes que abrem a tela do exercício esperam até 8 s na
+  primeira carga.
+- Botões cujo conteúdo visível já nomeia a ação não levam `aria-label` (o Lighthouse exige que o
+  nome acessível contenha o texto visível, inclusive a letra do quadrado).
 - Programa: edições do treino salvam na hora (nome/ênfase ao sair do campo; ordem, adicionar e
   remover slot imediatamente, remover com desfazer). O slot é editado numa folha com "Salvar".
   Reordenar: arrastar pela alça (@dnd-kit, também por teclado) ou setas ↑↓.

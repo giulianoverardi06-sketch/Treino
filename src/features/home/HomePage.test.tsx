@@ -65,8 +65,8 @@ describe('Início', () => {
       await screen.findByRole('heading', { name: /Treino C: Pernas e core/ }),
     ).toBeInTheDocument();
     expect(within(nextCard()).getByText(/ainda não feito/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Iniciar treino A/ })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Iniciar treino B/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Peito, ombro e tríceps/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Costas e bíceps/ })).toBeInTheDocument();
   });
 
   it('aviso de sobreposição para grupo primário feito nas últimas 24h', async () => {

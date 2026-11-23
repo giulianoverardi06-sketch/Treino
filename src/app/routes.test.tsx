@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { describe, expect, it } from 'vitest';
@@ -20,9 +20,9 @@ describe('rotas e layout', () => {
     ['/programa', 'Programa'],
     ['/biblioteca', 'Programa'],
     ['/config', 'Configurações'],
-  ])('%s renderiza "%s"', (path, title) => {
+  ])('%s renderiza "%s"', async (path, title) => {
     renderAt(path);
-    expect(screen.getByRole('heading', { level: 1, name: title })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { level: 1, name: title })).toBeInTheDocument();
   });
 
   it.each(['/sessao/nao-existe', '/historico/nao-existe'])('%s mostra aviso', async (path) => {
@@ -44,7 +44,9 @@ describe('rotas e layout', () => {
 
   it('exercício inexistente mostra aviso', async () => {
     renderAt('/exercicio/nao-existe');
-    expect(await screen.findByText('Exercício não encontrado.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Exercício não encontrado.', {}, { timeout: 8000 }),
+    ).toBeInTheDocument();
   });
 
   it('rota desconhecida volta para o Início', () => {
@@ -52,8 +54,9 @@ describe('rotas e layout', () => {
     expect(router.state.location.pathname).toBe('/');
   });
 
-  it('barra inferior tem 4 abas e marca a atual', () => {
+  it('barra inferior tem 4 abas e marca a atual', async () => {
     renderAt('/biblioteca');
+    await screen.findByRole('navigation', { name: 'Navegação principal' });
     const links = screen.getAllByRole('link').filter((l) => nav().contains(l));
     expect(links.map((l) => l.textContent)).toEqual([
       'Início',
@@ -82,7 +85,9 @@ describe('rotas e layout', () => {
   it('Configurações fica acessível pelo ícone no Início', async () => {
     const router = renderAt('/');
     await userEvent.click(screen.getByRole('link', { name: 'Configurações' }));
-    expect(router.state.location.pathname).toBe('/config');
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe('/config');
+    });
   });
 });
 

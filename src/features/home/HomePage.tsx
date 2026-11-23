@@ -71,7 +71,6 @@ function HomeContent({ data, onStart }: { data: HomeData; onStart: (letter: Lett
                   <li key={letter}>
                     <button
                       type="button"
-                      aria-label={`Iniciar treino ${letter}: ${t?.name ?? ''}`}
                       onClick={() => {
                         onStart(letter);
                       }}

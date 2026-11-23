@@ -51,7 +51,9 @@ async function done(letter: Letter, daysAgo: number, sets: [number, number?][], 
 describe('Detalhe do exercício', () => {
   it('sem registros', async () => {
     renderAt('/exercicio/peck-deck');
-    expect(await screen.findByText('Ainda sem registros deste exercício.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Ainda sem registros deste exercício.', {}, { timeout: 8000 }),
+    ).toBeInTheDocument();
   });
 
   it('tendência, recordes, gráficos e sessões', async () => {

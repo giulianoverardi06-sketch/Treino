@@ -150,8 +150,14 @@ function TemplateEditor({
           Arraste pela alça ou use as setas para mudar a ordem. Toque para editar.
         </p>
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+          {slots.length === 0 && (
+            <p className="rounded-[4px] border-2 border-edge bg-surface px-3 py-4 text-base">
+              Nenhum exercício neste treino ainda. Adicione o primeiro abaixo.
+            </p>
+          )}
           <SortableContext items={slots.map((s) => s.id)} strategy={verticalListSortingStrategy}>
             <ol
+              hidden={slots.length === 0}
               className="rounded-[4px] border-2 border-edge bg-surface"
               aria-label="Exercícios do treino"
             >
@@ -289,7 +295,6 @@ function SlotRow({
         type="button"
         onClick={onEdit}
         className="flex min-h-16 min-w-0 flex-1 items-center gap-3 py-2 text-left"
-        aria-label={`Editar ${slot.label}: ${primary}`}
       >
         <Tile size="sm">{position}</Tile>
         <span className="min-w-0 flex-1">

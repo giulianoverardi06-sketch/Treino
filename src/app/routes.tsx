@@ -2,33 +2,73 @@ import { Navigate, type RouteObject } from 'react-router';
 import { HistoryPage } from '@/features/history/HistoryPage';
 import { SessionDetailPage } from '@/features/history/SessionDetailPage';
 import { HomePage } from '@/features/home/HomePage';
-import { ExerciseEditPage } from '@/features/library/ExerciseEditPage';
-import { LibraryPage } from '@/features/library/LibraryPage';
-import { ExerciseDetailPage } from '@/features/progress/ExerciseDetailPage';
-import { ProgressPage } from '@/features/progress/ProgressPage';
-import { ProgramPage } from '@/features/program/ProgramPage';
-import { TemplateEditPage } from '@/features/program/TemplateEditPage';
 import { SessionPage } from '@/features/session/SessionPage';
-import { SettingsPage } from '@/features/settings/SettingsPage';
 import { AppLayout } from './AppLayout';
 
-/** Rotas do SPEC §6. Exportadas para os testes usarem um memory router. */
+/*
+ * Rotas do SPEC §6. Exportadas para os testes usarem um memory router.
+ *
+ * Início, sessão e histórico ficam no pacote principal (abrem na hora, inclusive offline).
+ * Gráficos (Recharts), edição do programa (dnd-kit) e configurações (zod) carregam sob demanda;
+ * o service worker já guarda esses pedaços, então continuam funcionando offline.
+ */
 export const routes: RouteObject[] = [
   {
     element: <AppLayout />,
+    hydrateFallbackElement: null,
     children: [
       { index: true, element: <HomePage /> },
       { path: 'sessao/:id', element: <SessionPage /> },
       { path: 'historico', element: <HistoryPage /> },
       { path: 'historico/:id', element: <SessionDetailPage /> },
-      { path: 'progresso', element: <ProgressPage /> },
-      { path: 'exercicio/:id', element: <ExerciseDetailPage /> },
-      { path: 'programa', element: <ProgramPage /> },
-      { path: 'programa/:letter', element: <TemplateEditPage /> },
-      { path: 'biblioteca', element: <LibraryPage /> },
-      { path: 'biblioteca/novo', element: <ExerciseEditPage /> },
-      { path: 'biblioteca/:id', element: <ExerciseEditPage /> },
-      { path: 'config', element: <SettingsPage /> },
+      {
+        path: 'progresso',
+        lazy: async () => ({
+          Component: (await import('@/features/progress/ProgressPage')).ProgressPage,
+        }),
+      },
+      {
+        path: 'exercicio/:id',
+        lazy: async () => ({
+          Component: (await import('@/features/progress/ExerciseDetailPage')).ExerciseDetailPage,
+        }),
+      },
+      {
+        path: 'programa',
+        lazy: async () => ({
+          Component: (await import('@/features/program/ProgramPage')).ProgramPage,
+        }),
+      },
+      {
+        path: 'programa/:letter',
+        lazy: async () => ({
+          Component: (await import('@/features/program/TemplateEditPage')).TemplateEditPage,
+        }),
+      },
+      {
+        path: 'biblioteca',
+        lazy: async () => ({
+          Component: (await import('@/features/library/LibraryPage')).LibraryPage,
+        }),
+      },
+      {
+        path: 'biblioteca/novo',
+        lazy: async () => ({
+          Component: (await import('@/features/library/ExerciseEditPage')).ExerciseEditPage,
+        }),
+      },
+      {
+        path: 'biblioteca/:id',
+        lazy: async () => ({
+          Component: (await import('@/features/library/ExerciseEditPage')).ExerciseEditPage,
+        }),
+      },
+      {
+        path: 'config',
+        lazy: async () => ({
+          Component: (await import('@/features/settings/SettingsPage')).SettingsPage,
+        }),
+      },
       { path: '*', element: <Navigate to="/" replace /> },
     ],
   },

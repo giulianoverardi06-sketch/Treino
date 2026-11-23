@@ -63,9 +63,7 @@ describe('Editar treino', () => {
 
   it('edita slot: promove alternativa, muda séries e opcional', async () => {
     renderAt('/programa/b');
-    await userEvent.click(
-      await screen.findByRole('button', { name: 'Editar Puxada vertical: Pulley frente' }),
-    );
+    await userEvent.click(await screen.findByRole('button', { name: /^Puxada vertical/ }));
     const dialog = within(screen.getByRole('dialog', { name: 'Editar exercício do treino' }));
     await userEvent.click(
       dialog.getByRole('button', { name: 'Tornar Puxada unilateral o principal' }),
@@ -86,9 +84,7 @@ describe('Editar treino', () => {
 
   it('remove slot com desfazer', async () => {
     renderAt('/programa/b');
-    await userEvent.click(
-      await screen.findByRole('button', { name: /Editar Bíceps complementar/ }),
-    );
+    await userEvent.click(await screen.findByRole('button', { name: /^Bíceps complementar/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Remover' }));
     await waitFor(async () => {
       expect(await slotIds()).not.toContain('Bíceps complementar');
