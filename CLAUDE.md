@@ -12,7 +12,8 @@
   - [x] Fase 3 — Início com próximo treino, sobreposição e continuar sessão
   - [x] Fase 4 — Histórico (5.4) e edição de séries passadas
   - [x] Fase 5 — Progressão e gráficos (5.5)
-  - [ ] Fase 6 — Programa e biblioteca (5.6 e 5.7), sem imagens
+  - [x] Fase 6 — Programa e biblioteca (5.6 e 5.7), sem imagens
+  - [ ] Fase 7 — Imagens (free-exercise-db, upload)
 
 ## Decisões que desviam ou completam o SPEC
 
@@ -52,6 +53,13 @@
 - Métrica lateral só usa sessões em que a entrada do exercício estava no protocolo `drop_lateral`.
 - Equilíbrio empurrar/puxar: peito superior conta como peito.
 - Bundle passou de 500 kB por causa do Recharts; dividir as rotas de gráfico na Fase 9.
+- Programa: edições do treino salvam na hora (nome/ênfase ao sair do campo; ordem, adicionar e
+  remover slot imediatamente, remover com desfazer). O slot é editado numa folha com "Salvar".
+  Reordenar: arrastar pela alça (@dnd-kit, também por teclado) ou setas ↑↓.
+- Biblioteca: excluir só exercício sem histórico e fora do programa; senão arquivar
+  (`deletionPolicy`). Nome único entre não arquivados, comparado sem acento/caixa.
+- Erros de formulário ficam fora do `<label>` e ligados por `aria-describedby` (dentro do label
+  mudariam o nome acessível do campo).
 
 ## Comandos
 

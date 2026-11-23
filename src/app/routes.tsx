@@ -26,6 +26,7 @@ export const routes: RouteObject[] = [
       { path: 'programa', element: <ProgramPage /> },
       { path: 'programa/:letter', element: <TemplateEditPage /> },
       { path: 'biblioteca', element: <LibraryPage /> },
+      { path: 'biblioteca/novo', element: <ExerciseEditPage /> },
       { path: 'biblioteca/:id', element: <ExerciseEditPage /> },
       { path: 'config', element: <SettingsPage /> },
       { path: '*', element: <Navigate to="/" replace /> },

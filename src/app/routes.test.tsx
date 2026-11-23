@@ -18,9 +18,7 @@ describe('rotas e layout', () => {
     ['/historico', 'Histórico'],
     ['/progresso', 'Progresso'],
     ['/programa', 'Programa'],
-    ['/programa/b', 'Treino B'],
     ['/biblioteca', 'Programa'],
-    ['/biblioteca/e1', 'Editar exercício'],
     ['/config', 'Configurações'],
   ])('%s renderiza "%s"', (path, title) => {
     renderAt(path);
@@ -30,6 +28,18 @@ describe('rotas e layout', () => {
   it.each(['/sessao/nao-existe', '/historico/nao-existe'])('%s mostra aviso', async (path) => {
     renderAt(path);
     expect(await screen.findByText('Sessão não encontrada.')).toBeInTheDocument();
+  });
+
+  it('/programa/b e /biblioteca/novo carregam do banco', async () => {
+    renderAt('/programa/b');
+    expect(await screen.findByRole('heading', { level: 1, name: 'Treino B' })).toBeInTheDocument();
+  });
+
+  it('/biblioteca/novo abre o formulário', async () => {
+    renderAt('/biblioteca/novo');
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Novo exercício' }),
+    ).toBeInTheDocument();
   });
 
   it('exercício inexistente mostra aviso', async () => {
