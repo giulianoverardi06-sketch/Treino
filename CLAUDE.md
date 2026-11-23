@@ -18,7 +18,10 @@
         ainda não testado num celular/Chrome real: o navegador embutido não registra service workers)
   - [x] Fase 9 — Polimento: telas pesadas sob demanda (pacote principal 209 kB), Lighthouse
         mobile 98–100 em desempenho e 100 em acessibilidade/boas práticas, estados vazios, workflow de
-        deploy no GitHub Pages pronto. Falta publicar (precisa de um repositório no GitHub do usuário).
+        deploy no GitHub Pages.
+- Publicado em https://giulianoverardi06-sketch.github.io/Treino/ (repo
+  github.com/giulianoverardi06-sketch/Treino). Cada push na `main` roda lint, testes, build e
+  publica. O `git push` precisa do terminal interativo do usuário (login do Git Credential Manager).
 
 ## Decisões que desviam ou completam o SPEC
 
