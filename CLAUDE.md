@@ -14,7 +14,9 @@
   - [x] Fase 5 — Progressão e gráficos (5.5)
   - [x] Fase 6 — Programa e biblioteca (5.6 e 5.7), sem imagens
   - [x] Fase 7 — Imagens (free-exercise-db, upload)
-  - [ ] Fase 8 — PWA, backup JSON/CSV, configurações, wake lock
+  - [x] Fase 8 — PWA, backup JSON/CSV, configurações, wake lock (registro do service worker
+    ainda não testado num celular/Chrome real: o navegador embutido não registra service workers)
+  - [ ] Fase 9 — Polimento: estados vazios, acessibilidade, Lighthouse, deploy
 
 ## Decisões que desviam ou completam o SPEC
 
@@ -64,6 +66,17 @@
   seed sem imagem. Upload e "banco aberto" viram blobs na tabela `images` (`kind: 'custom'`,
   `altBlobId` para a 2ª foto); trocar/remover apaga os blobs antigos. O índice do banco aberto é
   carregado sob demanda (chunk separado).
+- Backup (`domain/backup.ts`, `db/backupRepo.ts`): JSON validado com zod; importar substitui tudo
+  numa transação e antes baixa `treino-antes-de-importar-AAAA-MM-DD.json`. "Sem imagens" converte
+  fotos próprias em "sem imagem". CSV: `;`, vírgula decimal e BOM (abre direto no Excel pt-BR),
+  só sessões concluídas. "Apagar tudo" volta ao programa inicial (seed).
+- Teste de backup roda com `@vitest-environment node`: o structuredClone do jsdom perde Blobs no
+  IndexedDB falso.
+- PWA (`vite-plugin-pwa`, generateSW): pré-carrega app, fontes, índice do banco aberto e as fotos
+  do seed. Ícones gerados de `public/icon.svg` com `npx pwa-assets-generator`.
+- Tema: `app/ThemeSync.tsx` aplica `settings.theme` no `<html>` e no `theme-color`.
+- Nunca reescrever arquivos com `Get-Content | Set-Content` no PowerShell 5.1: lê como ANSI e
+  estraga os acentos. Usar as ferramentas de edição ou Python com `encoding='utf-8'`.
 - Erros de formulário ficam fora do `<label>` e ligados por `aria-describedby` (dentro do label
   mudariam o nome acessível do campo).
 

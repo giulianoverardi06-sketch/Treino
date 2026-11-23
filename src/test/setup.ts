@@ -13,8 +13,9 @@ if (!('ResizeObserver' in globalThis)) {
   Object.assign(globalThis, { ResizeObserver: ResizeObserverStub });
 }
 
-// jsdom não implementa scrollIntoView (a sessão rola até o próximo exercício).
-if (!('scrollIntoView' in Element.prototype)) {
+// jsdom não implementa scrollIntoView (a sessão rola até o próximo exercício). Testes que rodam
+// no ambiente Node (`@vitest-environment node`) não têm Element.
+if (typeof Element !== 'undefined' && !('scrollIntoView' in Element.prototype)) {
   Object.assign(Element.prototype, { scrollIntoView() {} });
 }
 

@@ -1,6 +1,7 @@
 import { Outlet, ScrollRestoration, useLocation } from 'react-router';
 import { ToastProvider } from '@/components/Toast';
 import { BottomNav } from './BottomNav';
+import { ThemeSync } from './ThemeSync';
 
 /** Coluna central (máx. 480px) + barra inferior. A sessão ativa esconde a barra. */
 export function AppLayout() {
@@ -17,6 +18,7 @@ export function AppLayout() {
       </div>
       {/* Tela nova abre no topo; "voltar" restaura a rolagem de antes. */}
       <ScrollRestoration />
+      <ThemeSync />
     </ToastProvider>
   );
 }
