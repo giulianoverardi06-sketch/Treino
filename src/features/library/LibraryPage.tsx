@@ -3,6 +3,7 @@ import { ChevronRight, Plus, Search } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { buttonClass } from '@/components/buttonStyles';
+import { ExerciseImage } from '@/components/ExerciseImage';
 import { PageHeader } from '@/components/PageHeader';
 import { Select } from '@/components/Select';
 import { ProgramTabs } from '@/components/ProgramTabs';
@@ -127,6 +128,7 @@ export function LibraryPage() {
                     to={`/biblioteca/${e.id}`}
                     className="flex min-h-16 items-center gap-3 py-2 hover:bg-surface-2"
                   >
+                    <ExerciseImage exercise={e} size="thumb" />
                     <span className="min-w-0 flex-1">
                       <span className="block text-base leading-tight font-bold">
                         {e.name}

@@ -120,7 +120,14 @@ describe('sessão ativa', () => {
     await waitFor(async () => {
       expect(await logs(id)).toHaveLength(0);
     });
-    const header = () => screen.getByRole('button', { name: /Supino inclinado na máquina/ });
+    // O cabeçalho do card (aria-expanded), não o botão da foto, que também cita o exercício.
+    const header = () => {
+      const button = screen
+        .getAllByRole('button', { name: /Supino inclinado na máquina/ })
+        .find((b) => b.hasAttribute('aria-expanded'));
+      if (!button) throw new Error('cabeçalho do card não encontrado');
+      return button;
+    };
     expect(await within(header()).findByText('0/3')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Desfazer' }));

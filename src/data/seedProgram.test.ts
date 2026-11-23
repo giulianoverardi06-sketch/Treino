@@ -64,9 +64,15 @@ describe('seed do programa', () => {
     ]);
   });
 
-  it('exercícios começam sem imagem, não arquivados e com incremento positivo', () => {
+  it('exercícios começam não arquivados, com incremento positivo e foto quando há correspondência', () => {
+    expect(seed.exercises.find((e) => e.id === 'leg-press-45')?.imageSource).toEqual({
+      kind: 'freeExerciseDb',
+      dbId: 'Leg_Press',
+    });
+    expect(seed.exercises.find((e) => e.id === 'elevacao-lateral-maquina')?.imageSource).toEqual({
+      kind: 'none',
+    });
     for (const e of seed.exercises) {
-      expect(e.imageSource).toEqual({ kind: 'none' });
       expect(e.archived).toBe(false);
       expect(e.defaultIncrementKg).toBeGreaterThan(0);
       expect(e.primaryMuscles.length).toBeGreaterThan(0);
@@ -80,5 +86,19 @@ describe('seed do programa', () => {
       defaultToFailure: true,
       lateralDropKg: 2,
     });
+  });
+
+  it('todo exercício do seed está no mapa de imagens e todo id existe no índice', async () => {
+    const { SEED_IMAGE_MAP } = await import('./seedImageMap');
+    const index = (await import('./exerciseDbIndex.json')).default as {
+      id: string;
+      images: string[];
+    }[];
+    const ids = new Map(index.map((e) => [e.id, e]));
+    for (const e of seed.exercises) {
+      expect(e.id in SEED_IMAGE_MAP, e.id).toBe(true);
+      const match = SEED_IMAGE_MAP[e.id];
+      if (match) expect(ids.get(match.dbId)?.images.length, match.dbId).toBeGreaterThanOrEqual(2);
+    }
   });
 });

@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Archive, ArchiveRestore, ChartLine, Trash2 } from 'lucide-react';
+import { Archive, ArchiveRestore, Camera, ChartLine, ImageOff, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { Button } from '@/components/Button';
@@ -9,7 +9,10 @@ import { PageHeader } from '@/components/PageHeader';
 import { Select } from '@/components/Select';
 import { LetterTile } from '@/components/Sign';
 import { useToast } from '@/components/Toast';
+import { ExerciseImage } from '@/components/ExerciseImage';
 import { db } from '@/db/db';
+import { importFromExerciseDb, removeExerciseImage, uploadExerciseImage } from '@/db/imageRepo';
+import { ExerciseDbSheet } from './ExerciseDbSheet';
 import {
   deleteExercise,
   exerciseHasHistory,
@@ -114,6 +117,100 @@ function MuscleChips({
   );
 }
 
+/** Foto do exercício: banco aberto, foto própria (câmera/galeria) ou nenhuma (SPEC §5.7). */
+function ImageSection({ exercise }: { exercise: Exercise }) {
+  const toast = useToast();
+  const [searching, setSearching] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const hasImage = exercise.imageSource.kind !== 'none';
+
+  async function run(task: () => Promise<void>, done: string) {
+    setBusy(true);
+    try {
+      await task();
+      toast({ message: done });
+      return true;
+    } catch (e) {
+      toast({ message: e instanceof Error ? e.message : 'Não foi possível salvar a imagem.' });
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section aria-labelledby="image-title" className="mb-8">
+      <h2 id="image-title" className="mb-2 text-lg font-extrabold">
+        Imagem
+      </h2>
+      <ExerciseImage
+        exercise={exercise}
+        size="large"
+        emptyHint="Sem foto. Busque no banco aberto ou envie a sua."
+      />
+      <div className="mt-2 flex flex-wrap gap-2">
+        <Button
+          variant="outline"
+          icon={Search}
+          disabled={busy}
+          onClick={() => {
+            setSearching(true);
+          }}
+        >
+          Banco aberto
+        </Button>
+        <label
+          className={buttonClass(
+            'outline',
+            `cursor-pointer has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-focus ${busy ? 'pointer-events-none opacity-40' : ''}`,
+          )}
+        >
+          <Camera aria-hidden size={20} strokeWidth={2.25} />
+          <span>Enviar foto</span>
+          <input
+            type="file"
+            accept="image/*"
+            className="sr-only"
+            disabled={busy}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              e.target.value = '';
+              if (file) void run(() => uploadExerciseImage(exercise.id, file), 'Foto salva');
+            }}
+          />
+        </label>
+        {hasImage && (
+          <Button
+            variant="quiet"
+            icon={ImageOff}
+            disabled={busy}
+            onClick={() => void run(() => removeExerciseImage(exercise.id), 'Imagem removida')}
+          >
+            Remover
+          </Button>
+        )}
+      </div>
+      {searching && (
+        <ExerciseDbSheet
+          initialQuery=""
+          busy={busy}
+          onClose={() => {
+            setSearching(false);
+          }}
+          onPick={(entry) => {
+            void run(
+              () => importFromExerciseDb(exercise.id, entry),
+              'Imagem do banco aberto salva',
+            ).then((ok) => {
+              if (ok) setSearching(false);
+            });
+          }}
+        />
+      )}
+    </section>
+  );
+}
+
 function ExerciseForm({ data }: { data: EditData }) {
   const { exercise, all, templates, hasHistory } = data;
   const navigate = useNavigate();
@@ -164,6 +261,12 @@ function ExerciseForm({ data }: { data: EditData }) {
         backTo="/biblioteca"
         historyBack
       />
+
+      {exercise ? (
+        <ImageSection exercise={exercise} />
+      ) : (
+        <p className="mb-6 text-sm text-muted">Depois de criar, dá para adicionar uma foto.</p>
+      )}
 
       <form
         className="flex flex-col gap-6"

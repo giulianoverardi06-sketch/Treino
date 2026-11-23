@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable, type Transaction } from 'dexie';
-import { buildSeed } from '@/data/seedProgram';
+import { buildSeed, seedImageSource } from '@/data/seedProgram';
 import type {
   Exercise,
   Session,
@@ -33,6 +33,20 @@ function registerVersions(db: Dexie) {
     images: 'id',
     settings: 'id',
   });
+
+  // v2 (Fase 7): fotos do free-exercise-db nos exercícios do seed que ainda estão sem imagem.
+  // Quem já escolheu uma imagem (ou enviou a sua) não é tocado.
+  db.version(2)
+    .stores({})
+    .upgrade(async (tx) => {
+      await tx
+        .table<Exercise, string>('exercises')
+        .toCollection()
+        .modify((e) => {
+          if (e.imageSource.kind === 'none') e.imageSource = seedImageSource(e.id);
+        });
+      await tx.table<Settings, string>('settings').update('singleton', { schemaVersion: 2 });
+    });
 }
 
 /** Seed na criação do banco. O evento `populate` só dispara uma vez, dentro da transação de criação. */

@@ -27,7 +27,13 @@ export type MuscleGroup =
 export type Equipment = 'maquina' | 'polia' | 'halteres' | 'barra' | 'peso_corporal' | 'outro';
 
 export type ImageSource =
-  { kind: 'freeExerciseDb'; dbId: string } | { kind: 'custom'; blobId: string } | { kind: 'none' };
+  | { kind: 'freeExerciseDb'; dbId: string }
+  | {
+      kind: 'custom';
+      blobId: string;
+      /** Segunda foto (posição final), quando existe. */ altBlobId?: string;
+    }
+  | { kind: 'none' };
 
 export interface Exercise {
   id: string;

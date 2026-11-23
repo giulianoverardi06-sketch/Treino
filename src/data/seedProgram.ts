@@ -1,6 +1,7 @@
 import type {
   Equipment,
   Exercise,
+  ImageSource,
   Letter,
   MuscleGroup,
   Settings,
@@ -8,13 +9,14 @@ import type {
   SlotProtocol,
   WorkoutTemplate,
 } from '@/domain/types';
+import { SEED_IMAGE_MAP } from './seedImageMap';
 
 /**
  * Programa inicial (SPEC §4). Roda uma vez, na criação do banco; tudo fica editável depois.
  * IDs são slugs estáveis: o mapeamento de imagens (Fase 7) e os testes dependem deles.
  */
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 interface SeedExercise {
   id: string;
@@ -311,6 +313,12 @@ export const SEED_TEMPLATES: readonly SeedTemplate[] = [
   },
 ];
 
+/** Foto do free-exercise-db para um exercício do seed, quando existe correspondência. */
+export function seedImageSource(exerciseId: string): ImageSource {
+  const match = SEED_IMAGE_MAP[exerciseId];
+  return match ? { kind: 'freeExerciseDb', dbId: match.dbId } : { kind: 'none' };
+}
+
 export const DEFAULT_SETTINGS: Settings = {
   id: 'singleton',
   theme: 'dark',
@@ -334,7 +342,7 @@ export function buildSeed(now: string): SeedData {
     primaryMuscles: e.primary,
     secondaryMuscles: e.secondary ?? [],
     equipment: e.equipment,
-    imageSource: { kind: 'none' },
+    imageSource: seedImageSource(e.id),
     defaultIncrementKg: e.incrementKg,
     archived: false,
     createdAt: now,

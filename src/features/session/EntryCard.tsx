@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
+import { ExerciseImage } from '@/components/ExerciseImage';
 import { Tile } from '@/components/Sign';
 import { useToast } from '@/components/Toast';
 import {
@@ -188,6 +189,7 @@ export function EntryCard({
           className="flex min-h-[4.5rem] min-w-0 flex-1 items-center gap-3 py-3 text-left"
         >
           {complete ? <Tile icon={Check} inverse /> : <Tile>{position}</Tile>}
+          <ExerciseImage exercise={exercise} size="thumb" />
           <span className="min-w-0 flex-1">
             <span className="block text-lg leading-tight font-bold">
               {exerciseName(exercises, entry.exerciseId)}
@@ -221,6 +223,7 @@ export function EntryCard({
 
       {expanded && (
         <div className="flex flex-col gap-4" role="region" aria-labelledby={headerId}>
+          <ExerciseImage exercise={exercise} size="compact" />
           {(exercise?.notes ?? slot?.notes) && (
             <p className="text-base text-muted">
               {[exercise?.notes, slot?.notes].filter(Boolean).join(' · ')}

@@ -13,7 +13,8 @@
   - [x] Fase 4 — Histórico (5.4) e edição de séries passadas
   - [x] Fase 5 — Progressão e gráficos (5.5)
   - [x] Fase 6 — Programa e biblioteca (5.6 e 5.7), sem imagens
-  - [ ] Fase 7 — Imagens (free-exercise-db, upload)
+  - [x] Fase 7 — Imagens (free-exercise-db, upload)
+  - [ ] Fase 8 — PWA, backup JSON/CSV, configurações, wake lock
 
 ## Decisões que desviam ou completam o SPEC
 
@@ -58,6 +59,11 @@
   Reordenar: arrastar pela alça (@dnd-kit, também por teclado) ou setas ↑↓.
 - Biblioteca: excluir só exercício sem histórico e fora do programa; senão arquivar
   (`deletionPolicy`). Nome único entre não arquivados, comparado sem acento/caixa.
+- Imagens: seed mapeado em `src/data/seedImageMap.ts` (revisão em `docs/IMAGENS-REVISAO.md`);
+  fotos do seed em `public/exercise-images/<dbId>/0|1.jpg` (600px). Banco v2 migra exercícios do
+  seed sem imagem. Upload e "banco aberto" viram blobs na tabela `images` (`kind: 'custom'`,
+  `altBlobId` para a 2ª foto); trocar/remover apaga os blobs antigos. O índice do banco aberto é
+  carregado sob demanda (chunk separado).
 - Erros de formulário ficam fora do `<label>` e ligados por `aria-describedby` (dentro do label
   mudariam o nome acessível do campo).
 
